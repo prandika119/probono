@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Contoh Enum role seperti di ERD
+enum Role {
+  ADMIN
+  LAWYER
+  CLIENT
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id                  String             @id @default(uuid())
+  email               String             @unique
+  password            String             // Akan disimpan dalam bentuk hash bcrypt
+  name                String
+  nik                 String?            @unique
+  address             String?            @db.Text
+  role                Role               @default(CLIENT)
+  ktp_image           String?
+  verification_status VerificationStatus @default(PENDING)
+  is_active           Boolean            @default(false)
+  profile_image       String?
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+
+  @@map("users")
+}

@@ -140,5 +140,3 @@ Grup tabel ini mendukung fitur AI Chatbot berbasis _Retrieval-Augmented Generati
 - **Soft Deletes:** Gunakan field `deleted_at` di hampir semua tabel utama. Dalam sistem legal, menghapus data secara permanen sangat berisiko jika terjadi audit di masa depan.
 - **Security:** Mengingat ada data sensitif seperti NIK dan dokumen kasus, pastikan file di `case_documents` tidak bisa diakses via URL publik secara langsung. Gunakan **Private S3 Buckets** dengan **Pre-signed URLs**.
 - **OCR Integration:** Saat proses registrasi Client, data dari tabel `client_verifications` (sementara) dipindahkan ke tabel `clients` hanya jika status verifikasi sudah valid.
-
-ERD ini sudah cukup kokoh untuk menangani ribuan user. Apakah ada relasi tertentu yang ingin kamu ubah, misalnya sistem antrean kasusnya?

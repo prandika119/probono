@@ -24,20 +24,21 @@
 
 Sistem ini dibangun menggunakan arsitektur modern untuk menjamin performa dan skalabilitas:
 
-| Komponen      | Teknologi                     | Alasan Pemilihan                                                                                                    |
-| :------------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| **Frontend**  | **Next.js**                   | Dukungan SSR/ISR untuk SEO portal edukasi dan performa aplikasi yang responsif.                                     |
-| **Backend**   | **Express.js**                | Ringan, cepat, dan memiliki ekosistem library yang luas untuk integrasi AI dan pengolahan data.                     |
-| **Database**  | **PostgreSQL**                | Handal dalam menangani data relasional yang kompleks dan mendukung pencarian vektor (via pgvector) untuk fitur RAG. |
-| **Real-time** | **Socket.io**                 | Memungkinkan komunikasi dua arah yang instan pada fitur chat tanpa _overhead_ besar.                                |
-| **AI Engine** | **LangChain/OpenAI**          | Digunakan untuk pemrosesan dokumen hukum (_chunking_, _embedding_) pada fitur Knowledge Base.                       |
-| **Storage**   | **AWS S3 / Supabase Storage** | Penyimpanan aman untuk dokumen sensitif seperti foto KTP dan berkas bukti kasus.                                    |
+| Komponen      | Teknologi                     | Alasan Pemilihan                                                                                                           |
+| :------------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**  | **Next.js**                   | Dukungan SSR/ISR untuk SEO portal edukasi dan performa aplikasi yang responsif.                                            |
+| **Backend**   | **NestJS (Node.js)**          | Arsitektur modular yang modular dan terstruktur (TypeScript), memudahkan skalabilitas dan maintenance kode jangka panjang. |
+| **Database**  | **PostgreSQL**                | Handal dalam menangani data relasional yang kompleks dan mendukung pencarian vektor (via pgvector) untuk fitur RAG.        |
+| **Real-time** | **Socket.io**                 | Terintegrasi dengan baik dalam ekosistem NestJS melalui @nestjs/websockets untuk fitur chat.                               |
+| **AI Engine** | **LangChain/OpenAI**          | Digunakan untuk pemrosesan dokumen hukum (_chunking_, _embedding_) pada fitur Knowledge Base.                              |
+| **Storage**   | **AWS S3 / Supabase Storage** | Penyimpanan aman untuk dokumen sensitif seperti foto KTP dan berkas bukti kasus.                                           |
 
 ## 5. Cara Menjalankan Proyek
 
 ### Prasyarat
 
-- Node.js (v18 atau lebih baru)
+- Node.js (v20 atau lebih baru direkomendasikan)
+- NestJS CLI (`npm install -g @nestjs/cli`)
 - Docker (opsional, untuk database)
 - PostgreSQL
 
@@ -50,17 +51,17 @@ Sistem ini dibangun menggunakan arsitektur modern untuk menjamin performa dan sk
     cd probono
     ```
 
-2. **Setup Backend**
+2. **Setup Backend (NestJS)**
 
     ```bash
     cd backend
     npm install
     # Buat file .env dan sesuaikan konfigurasi database
     cp .env.example .env
-    npm run dev
+    npm run start:dev
     ```
 
-3. **Setup Frontend**
+3. **Setup Frontend (Next.js)**
 
     ```bash
     cd ../frontend
