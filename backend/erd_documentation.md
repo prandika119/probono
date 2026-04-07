@@ -12,12 +12,15 @@ Grup tabel ini menangani autentikasi dan otorisasi.
 | :---------- | :------------------ | :-------- | :-------------- | :-------------------------------- |
 | **users**   | id                  | UUID      | PK              | Unique ID                         |
 |             | email               | string    | Unique, Indexed | Email login                       |
+|             | phone_number        | string    | Unique          | Nomor telepon                     |
 |             | password            | string    | -               | Hashed password                   |
 |             | name                | string    | -               | Nama lengkap user                 |
 |             | nik                 | string    | Unique          | Nomor Induk Kependudukan (KTP)    |
 |             | address             | text      | -               | Alamat domisili                   |
+|             | province            | string    | -               | Provinsi tempat tinggal           |
+|             | city                | string    | -               | Kota tempat tinggal               |
 |             | role                | enum      | -               | `admin`, `lawyer`, `client`       |
-|             | ktp_image           | string    | -               | URL/Path foto KTP                 |
+|             | ktp_upload          | string    | -               | URL/Path foto KTP                 |
 |             | verification_status | enum      | -               | `pending`, `verified`, `rejected` |
 |             | is_active           | boolean   | Default: false  | Status akun aktif                 |
 |             | profile_image       | string    | -               | URL/Path foto profil              |
@@ -25,12 +28,16 @@ Grup tabel ini menangani autentikasi dan otorisasi.
 | **lawyers** | id                  | UUID      | PK              | Unique ID Lawyer                  |
 |             | user_id             | UUID      | FK (users.id)   | Relasi One-to-One ke Users        |
 |             | license_number      | string    | Unique          | NIP/No. Kartu Advokat             |
+|             | license_upload      | string    | -               | URL/Path foto lisensi             |
+|             | organization_name   | string    | -               | Nama organisasi tempat bekerja    |
+|             | office_address      | text      | -               | Alamat kantor                     |
 |             | experience          | text      | -               | Deskripsi singkat dan keahlian    |
 |             | speciality          | enum      | -               | Keahlian khusus                   |
-|             | rating              | float     | Default: 0.0    | Rata-rata penilaian               |
 | **clients** | id                  | UUID      | PK              | Unique ID Client                  |
 |             | user_id             | UUID      | FK (users.id)   | Relasi One-to-One ke Users        |
-|             | occupation          | string    | -               | Pekerjaan klien                   |
+|             | sktm_upload         | string    | -               | URL/Path SKTM                     |
+|             | province            | string    | -               | Provinsi tempat tinggal           |
+|             | city                | string    | -               | Kota tempat tinggal               |
 
 ---
 
@@ -38,34 +45,47 @@ Grup tabel ini menangani autentikasi dan otorisasi.
 
 Ini adalah jantung dari platform kamu, menghubungkan pencari bantuan dengan advokat.
 
-| Tabel              | Field       | Tipe Data | Constraint         | Deskripsi                                        |
-| :----------------- | :---------- | :-------- | :----------------- | :----------------------------------------------- |
-| **categories**     | id          | UUID      | PK                 | Master data kategori                             |
-|                    | name        | string    | -                  | Contoh: Pidana, Perdata                          |
-|                    | type        | enum      | -                  | `case` atau `news`                               |
-| **cases**          | id          | UUID      | PK                 | -                                                |
-|                    | client_id   | UUID      | FK (clients.id)    | Pelapor                                          |
-|                    | lawyer_id   | UUID      | FK (lawyers.id)    | **Nullable** (sebelum di-accept)                 |
-|                    | category_id | UUID      | FK (categories.id) | Jenis kasus                                      |
-|                    | title       | string    | -                  | Judul masalah hukum                              |
-|                    | description | text      | -                  | Kronologi                                        |
-|                    | status      | enum      | -                  | `submitted`, `accepted`, `in_progress`, `closed` |
-|                    | urgency     | enum      | -                  | `low`, `medium`, `high`                          |
-|                    | created_at  | timestamp | -                  | Waktu pengajuan kasus                            |
-|                    | updated_at  | timestamp | -                  | Waktu update terakhir kasus                      |
-| **case_documents** | id          | UUID      | PK                 | -                                                |
-|                    | case_id     | UUID      | FK (cases.id)      | File lampiran kasus                              |
-|                    | file_url    | string    | -                  | Path ke storage/S3                               |
-| **case_progress**  | id          | UUID      | PK                 | -                                                |
-|                    | case_id     | UUID      | FK (cases.id)      | Timeline perjalan kasus                          |
-|                    | note        | text      | -                  | Update status/catatan                            |
-| **reviews**        | id          | UUID      | PK                 | -                                                |
-|                    | case_id     | UUID      | FK (cases.id)      | Kasus yang dinilai (Unique)                      |
-|                    | client_id   | UUID      | FK (clients.id)    | Klien yang memberikan review                     |
-|                    | lawyer_id   | UUID      | FK (lawyers.id)    | Advokat yang direview                            |
-|                    | rating      | integer   | 1-5                | Nilai bintang                                    |
-|                    | comment     | text      | -                  | Ulasan/Komentar klien                            |
-|                    | created_at  | timestamp | -                  | Waktu review dibuat                              |
+| Tabel              | Field           | Tipe Data | Constraint         | Deskripsi                                        |
+| :----------------- | :-------------- | :-------- | :----------------- | :----------------------------------------------- |
+| **categories**     | id              | UUID      | PK                 | Master data kategori                             |
+|                    | name            | string    | -                  | Contoh: Pidana, Perdata, Ketenagakerjaan, dsb    |
+|                    | type            | enum      | -                  | `case` atau `news`                               |
+| **cases**          | id              | UUID      | PK                 | -                                                |
+|                    | client_id       | UUID      | FK (clients.id)    | Pelapor                                          |
+|                    | lawyer_id       | UUID      | FK (lawyers.id)    | **Nullable** (sebelum di-accept)                 |
+|                    | category_id     | UUID      | FK (categories.id) | Jenis kasus                                      |
+|                    | title           | string    | -                  | Judul masalah hukum                              |
+|                    | description     | text      | -                  | Kronologi                                        |
+|                    | location        | string    | -                  | Lokasi kejadian                                  |
+|                    | date            | date      | -                  | Tanggal kejadian                                 |
+|                    | opponent        | string    | -                  | Pihak lawan (jika ada)                           |
+|                    | estimated_loss  | decimal   | -                  | Estimasi kerugian (jika ada)                     |
+|                    | legal_goal      | text      | -                  | Tujuan hukum yang ingin dicapai                  |
+|                    | urgency         | enum      | -                  | `low`, `medium`, `high`                          |
+|                    | created_at      | timestamp | -                  | Waktu pengajuan kasus                            |
+|                    | updated_at      | timestamp | -                  | Waktu update terakhir kasus                      |
+| **case_documents** | id              | UUID      | PK                 | -                                                |
+|                    | case_id         | UUID      | FK (cases.id)      | File lampiran kasus                              |
+|                    | filename        | string    | -                  | Nama file asli                                   |
+|                    | file_url        | string    | -                  | Path ke storage/S3                               |
+| **case_progress**  | id              | UUID      | PK                 | -                                                |
+|                    | case_id         | UUID      | FK (cases.id)      | Timeline perjalan kasus                          |
+|                    | status          | enum      | -                  | `submitted`, `accepted`, `in_progress`, `closed` |
+|                    | note            | text      | -                  | Update status/catatan                            |
+| **consultations**  | id              | UUID      | PK                 | -                                                |
+|                    | case_id         | UUID      | FK (cases.id)      | Kasus yang dikonsultasikan                       |
+|                    | lawyer_id       | UUID      | FK (lawyers.id)    | Advokat yang memberikan konsultasi               |
+|                    | title           | string    | -                  | Judul konsultasi                                 |
+|                    | consultation_at | timestamp | -                  | Waktu konsultasi dilakukan                       |
+|                    | is_online       | boolean   | -                  | Apakah konsultasi dilakukan secara online        |
+|                    | notes           | text      | -                  | Catatan hasil konsultasi                         |
+| **reviews**        | id              | UUID      | PK                 | -                                                |
+|                    | case_id         | UUID      | FK (cases.id)      | Kasus yang dinilai (Unique)                      |
+|                    | client_id       | UUID      | FK (clients.id)    | Klien yang memberikan review                     |
+|                    | lawyer_id       | UUID      | FK (lawyers.id)    | Advokat yang direview                            |
+|                    | rating          | integer   | 1-5                | Nilai bintang                                    |
+|                    | comment         | text      | -                  | Ulasan/Komentar klien                            |
+|                    | created_at      | timestamp | -                  | Waktu review dibuat                              |
 
 ---
 
@@ -73,17 +93,22 @@ Ini adalah jantung dari platform kamu, menghubungkan pencari bantuan dengan advo
 
 Tabel untuk fitur interaksi (chat) dan konten artikel edukasi.
 
-| Tabel          | Field       | Tipe Data | Constraint         | Deskripsi                  |
-| :------------- | :---------- | :-------- | :----------------- | :------------------------- |
-| **chats**      | id          | UUID      | PK                 | -                          |
-|                | case_id     | UUID      | FK (cases.id)      | Konteks chat               |
-|                | sender_id   | UUID      | FK (users.id)      | Pengirim                   |
-|                | message     | text      | -                  | Konten pesan               |
-| **educations** | id          | UUID      | PK                 | -                          |
-|                | category_id | UUID      | FK (categories.id) | Kategori artikel           |
-|                | author_id   | UUID      | FK (users.id)      | Admin yang menulis         |
-|                | title       | string    | -                  | Judul artikel              |
-|                | content     | text      | -                  | Isi berita (Markdown/HTML) |
+| Tabel          | Field       | Tipe Data | Constraint         | Deskripsi                    |
+| :------------- | :---------- | :-------- | :----------------- | :--------------------------- |
+| **chats**      | id          | UUID      | PK                 | -                            |
+|                | case_id     | UUID      | FK (cases.id)      | Konteks chat                 |
+|                | sender_id   | UUID      | FK (users.id)      | Pengirim                     |
+|                | message     | text      | -                  | Konten pesan                 |
+|                | status      | enum      | -                  | `sent`, `delivered`, `read`  |
+| **files**      | id          | UUID      | PK                 | -                            |
+|                | chat_id     | UUID      | FK (chats.id)      | File yang dikirim dalam chat |
+|                | filename    | string    | -                  | Nama file asli               |
+|                | file_url    | string    | -                  | Path ke storage/S3           |
+| **educations** | id          | UUID      | PK                 | -                            |
+|                | category_id | UUID      | FK (categories.id) | Kategori artikel             |
+|                | author_id   | UUID      | FK (users.id)      | Admin yang menulis           |
+|                | title       | string    | -                  | Judul artikel                |
+|                | content     | text      | -                  | Isi berita (Markdown/HTML)   |
 
 ---
 
