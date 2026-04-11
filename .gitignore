@@ -2,7 +2,6 @@
 /dist
 /node_modules
 /build
-../node_modules/
 
 # Logs
 logs
@@ -46,15 +45,3 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
-pro.txt
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-/generated/prisma
