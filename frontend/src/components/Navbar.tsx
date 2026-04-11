@@ -21,12 +21,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <button className="text-sm font-semibold text-brand-900 hover:text-brand-800 px-4 py-2 transition-colors">
+          <Link href="/auth/login" className="text-sm font-semibold text-brand-900 hover:text-brand-800 px-4 py-2 transition-colors">
             Masuk
-          </button>
-          <button className="btn-primary py-2.5 px-5 text-sm">
+          </Link>
+          <Link href="/auth/register/client" className="btn-primary py-2.5 px-5 text-sm inline-block text-center rounded-lg">
             Minta Bantuan
-          </button>
+          </Link>
         </div>
         
         {/* Mobile Menu Button */}
