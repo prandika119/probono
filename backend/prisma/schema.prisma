@@ -24,13 +24,25 @@ enum VerificationStatus {
   REJECTED
 }
 
+enum Speciality {
+  PIDANA
+  PERDATA
+  KETENAGAKERJAAN
+  KELUARGA
+  BISNIS
+  LAINNYA
+}
+
 model User {
   id                  String             @id @default(uuid())
   email               String             @unique
+  phone_number        String             @unique
   password            String             // Akan disimpan dalam bentuk hash bcrypt
   name                String
   nik                 String?            @unique
   address             String?            @db.Text
+  province            String?
+  city                String?
   role                Role               @default(CLIENT)
   ktp_image           String?
   verification_status VerificationStatus @default(PENDING)
@@ -39,5 +51,33 @@ model User {
   created_at          DateTime           @default(now())
   updated_at          DateTime           @updatedAt
 
+  lawyer              Lawyer?
+  client              Client?
+
   @@map("users")
+}
+
+model Lawyer {
+  id                String       @id @default(uuid())
+  user_id           String       @unique
+  license_number    String       @unique
+  license_upload    String?
+  organization_name String?
+  office_address    String?      @db.Text
+  experience        String?      @db.Text
+  speciality        Speciality?
+
+  user              User         @relation(fields: [user_id], references: [id])
+
+  @@map("lawyers")
+}
+
+model Client {
+  id          String   @id @default(uuid())
+  user_id     String   @unique
+  sktm_upload String?
+
+  user        User     @relation(fields: [user_id], references: [id])
+
+  @@map("clients")
 }

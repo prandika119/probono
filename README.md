@@ -39,10 +39,10 @@ Sistem ini dibangun menggunakan arsitektur modern untuk menjamin performa dan sk
 
 - Node.js (v20 atau lebih baru direkomendasikan)
 - NestJS CLI (`npm install -g @nestjs/cli`)
-- Docker (opsional, untuk database)
-- PostgreSQL
+- Docker (opsional, jika ingin menjalankan PostgreSQL dari container)
+- PostgreSQL (Jalankan service database / buat database baru)
 
-### Langkah-langkah
+### Langkah-langkah Detail
 
 1. **Clone Repository**
 
@@ -51,17 +51,46 @@ Sistem ini dibangun menggunakan arsitektur modern untuk menjamin performa dan sk
     cd probono
     ```
 
-2. **Setup Backend (NestJS)**
+2. **Inisialisasi Environment Variables**
 
+    Karena backend bergantung pada database, pastikan Anda membuat file konfigurasinya.
+    ```bash
+    # Buat (atau duplikat) file environment di root folder proyek
+    cp .env.example .env
+    ```
+    Buka file `.env` tersebut dan isi string koneksi `DATABASE_URL` ke PostgreSQL Anda. Secara contoh:
+    ```env
+    DATABASE_URL="postgresql://username:password@localhost:5432/probono?schema=public"
+    JWT_SECRET="secret_token_anda_disini"
+    ```
+
+3. **Setup Backend (NestJS & Prisma)**
+
+    Kini saatnya menginstal library dan menyiapkan database menggunakan Prisma (sebagai ORM).
     ```bash
     cd backend
     npm install
-    # Buat file .env dan sesuaikan konfigurasi database
-    cp .env.example .env
-    npm run start:dev
+    
+    # Generate Prisma Client (untuk Type-safety ORM TypeScript terhadap Database)
+    npx prisma generate
+    
+    # Jalankan Migrasi Database untuk membuat arsitektur tabel yang diminta
+    npx prisma migrate dev --name init_auth
     ```
 
-3. **Setup Frontend (Next.js)**
+4. **Jalankan Aplikasi Backend**
+
+    Ketika migrasi berhasil, semua entitas telah aman.
+    ```bash
+    # Mode Pengembangan (Hot Reloading/Watch mode)
+    npm run start:dev
+    
+    # Mode Produksi
+    npm run build
+    npm run start:prod
+    ```
+
+5. **Setup Frontend (Next.js)** (Catatan tambahan)
 
     ```bash
     cd ../frontend
@@ -71,8 +100,10 @@ Sistem ini dibangun menggunakan arsitektur modern untuk menjamin performa dan sk
     npm run dev
     ```
 
-4. **Akses Aplikasi**
-   Buka browser dan akses `http://localhost:3000` untuk Frontend, dan API akan berjalan di `http://localhost:5000` (atau port yang dikonfigurasi).
+6. **Akses Test Aplikasi**
+
+   - **Frontend:** Buka browser dan akses `http://localhost:3000`
+   - **Backend API:** Secara default berjalan di `http://localhost:3009/api/v1` (sesuai port NestJS)
 
 ---
 

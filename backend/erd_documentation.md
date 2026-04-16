@@ -36,8 +36,6 @@ Grup tabel ini menangani autentikasi dan otorisasi.
 | **clients** | id                  | UUID      | PK              | Unique ID Client                  |
 |             | user_id             | UUID      | FK (users.id)   | Relasi One-to-One ke Users        |
 |             | sktm_upload         | string    | -               | URL/Path SKTM                     |
-|             | province            | string    | -               | Provinsi tempat tinggal           |
-|             | city                | string    | -               | Kota tempat tinggal               |
 
 ---
 
