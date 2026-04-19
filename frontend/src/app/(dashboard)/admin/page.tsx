@@ -144,7 +144,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-2 gap-4">
               <Link href="/admin/verifikasi" className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg border border-slate-700 transition">
                 <Shield className="w-6 h-6 text-blue-400 mb-2" />
-                <h3 className="font-semibold text-sm">Verifikasi User</h3>
+                <h3 className="font-semibold text-sm">Verifikasi Pengguna</h3>
                 <p className="text-xs text-slate-400 mt-1">Approve/Reject pendaftaran.</p>
               </Link>
               <Link href="/admin/kasus" className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg border border-slate-700 transition">
