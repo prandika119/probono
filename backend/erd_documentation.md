@@ -76,6 +76,8 @@ Ini adalah jantung dari platform kamu, menghubungkan pencari bantuan dengan advo
 |                    | title           | string    | -                  | Judul konsultasi                                 |
 |                    | consultation_at | timestamp | -                  | Waktu konsultasi dilakukan                       |
 |                    | is_online       | boolean   | -                  | Apakah konsultasi dilakukan secara online        |
+|                    | link_meet       | string    | -                  | Link meeting (Opsional)                          |
+|                    | location        | string    | -                  | Lokasi konsultasi (Opsional)                     |
 |                    | notes           | text      | -                  | Catatan hasil konsultasi                         |
 | **reviews**        | id              | UUID      | PK                 | -                                                |
 |                    | case_id         | UUID      | FK (cases.id)      | Kasus yang dinilai (Unique)                      |

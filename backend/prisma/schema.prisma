@@ -68,6 +68,9 @@ model Lawyer {
   speciality        Speciality?
 
   user              User         @relation(fields: [user_id], references: [id])
+  cases             Case[]
+  consultations     Consultation[]
+  reviews           Review[]
 
   @@map("lawyers")
 }
@@ -78,6 +81,118 @@ model Client {
   sktm_upload String?
 
   user        User     @relation(fields: [user_id], references: [id])
+  cases       Case[]
+  reviews     Review[]
 
   @@map("clients")
+}
+
+enum CaseStatus {
+  SUBMITTED
+  ACCEPTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum Urgency {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum CategoryType {
+  CASE
+  NEWS
+}
+
+model Category {
+  id         String       @id @default(uuid())
+  name       String
+  type       CategoryType
+  cases      Case[]
+
+  @@map("categories")
+}
+
+model Case {
+  id             String       @id @default(uuid())
+  client_id      String
+  lawyer_id      String?
+  category_id    String
+  title          String
+  description    String       @db.Text
+  location       String?
+  date           DateTime?
+  opponent       String?
+  estimated_loss Decimal?     @db.Decimal(15, 2)
+  legal_goal     String?      @db.Text
+  urgency        Urgency      @default(LOW)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  client         Client          @relation(fields: [client_id], references: [id])
+  lawyer         Lawyer?         @relation(fields: [lawyer_id], references: [id])
+  category       Category        @relation(fields: [category_id], references: [id])
+  documents      CaseDocument[]
+  progress       CaseProgress[]
+  consultations  Consultation[]
+  reviews        Review[]
+
+  @@map("cases")
+}
+
+model CaseDocument {
+  id         String   @id @default(uuid())
+  case_id    String
+  filename   String
+  file_url   String
+
+  case       Case     @relation(fields: [case_id], references: [id])
+
+  @@map("case_documents")
+}
+
+model CaseProgress {
+  id         String     @id @default(uuid())
+  case_id    String
+  status     CaseStatus
+  note       String?    @db.Text
+  created_at DateTime   @default(now())
+
+  case       Case       @relation(fields: [case_id], references: [id])
+
+  @@map("case_progress")
+}
+
+model Consultation {
+  id              String   @id @default(uuid())
+  case_id         String
+  lawyer_id       String
+  title           String
+  consultation_at DateTime
+  is_online       Boolean  @default(false)
+  link_meet       String?
+  location        String?
+  notes           String?  @db.Text
+
+  case            Case     @relation(fields: [case_id], references: [id])
+  lawyer          Lawyer   @relation(fields: [lawyer_id], references: [id])
+
+  @@map("consultations")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  case_id    String   @unique
+  client_id  String
+  lawyer_id  String
+  rating     Int
+  comment    String?  @db.Text
+  created_at DateTime @default(now())
+
+  case       Case     @relation(fields: [case_id], references: [id])
+  client     Client   @relation(fields: [client_id], references: [id])
+  lawyer     Lawyer   @relation(fields: [lawyer_id], references: [id])
+
+  @@map("reviews")
 }
