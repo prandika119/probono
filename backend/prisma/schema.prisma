@@ -80,9 +80,10 @@ model Client {
   user_id     String   @unique
   sktm_upload String?
 
-  user        User     @relation(fields: [user_id], references: [id])
-  cases       Case[]
-  reviews     Review[]
+  user          User           @relation(fields: [user_id], references: [id])
+  cases         Case[]
+  reviews       Review[]
+  consultations Consultation[]
 
   @@map("clients")
 }
@@ -168,6 +169,7 @@ model Consultation {
   id              String   @id @default(uuid())
   case_id         String
   lawyer_id       String
+  client_id       String
   title           String
   consultation_at DateTime
   is_online       Boolean  @default(false)
@@ -177,6 +179,7 @@ model Consultation {
 
   case            Case     @relation(fields: [case_id], references: [id])
   lawyer          Lawyer   @relation(fields: [lawyer_id], references: [id])
+  client          Client   @relation(fields: [client_id], references: [id])
 
   @@map("consultations")
 }
