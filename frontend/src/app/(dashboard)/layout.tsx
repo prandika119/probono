@@ -189,7 +189,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <nav className="flex-1 space-y-1">
             {navigation.map((item) => {
-              const isActive = pathname === item.href || (item.href !== `/${roleFromPath}` && pathname?.startsWith(item.href));
+              const bestMatch = [...navigation]
+                .sort((a, b) => b.href.length - a.href.length)
+                .find((n) => pathname === n.href || pathname?.startsWith(`${n.href}/`));
+              
+              const isActive = bestMatch?.href === item.href;
               const bgClass = isActive ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900";
               return (
                 <Link key={item.name} href={item.href}

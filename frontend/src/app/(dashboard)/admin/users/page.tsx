@@ -77,10 +77,6 @@ export default function UsersManagementPage() {
         return;
       }
       
-      // We assume there's an endpoint to toggle active status or update user. 
-      // Based on typical REST, it might be PATCH /users/:id 
-      // If such endpoint doesn't exist yet, we will just show an alert.
-      // Let's call the generic PATCH /users/:id
       await apiFetch(`/users/${userId}`, {
         method: "PATCH",
         body: { is_active: !currentActiveStatus },

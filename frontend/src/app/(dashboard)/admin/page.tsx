@@ -79,9 +79,9 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Tugas Mengantri (Action Needed) */}
-        <div className="bg-white shadow-sm border border-slate-200 rounded-lg p-6 flex flex-col h-full">
+        <div className="bg-white shadow-sm border border-slate-200 rounded-xl p-6 flex flex-col h-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-slate-900">Tugas Prioritas</h2>
+            <h2 className="text-xl font-bold text-slate-900">Tugas Prioritas</h2>
             <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
               Perlu Tindakan
             </span>
@@ -138,29 +138,29 @@ export default function AdminDashboard() {
         </div>
 
         {/* Shortcut Management */}
-        <div className="bg-slate-900 rounded-xl shadow-sm text-white p-6 relative overflow-hidden flex flex-col justify-between min-h-[300px]">
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 relative overflow-hidden flex flex-col justify-between min-h-[300px]">
           <div className="relative z-10">
-            <h2 className="text-xl font-bold mb-4 text-white">Sistem Kontrol</h2>
+            <h2 className="text-xl font-bold mb-4 text-slate-900">Sistem Kontrol</h2>
             <div className="grid grid-cols-2 gap-4">
-              <Link href="/admin/verifikasi" className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg border border-slate-700 transition">
-                <Shield className="w-6 h-6 text-blue-400 mb-2" />
-                <h3 className="font-semibold text-sm">Verifikasi Pengguna</h3>
-                <p className="text-xs text-slate-400 mt-1">Approve/Reject pendaftaran.</p>
+              <Link href="/admin/verifikasi" className="bg-slate-50 hover:bg-slate-100 p-4 rounded-lg border border-slate-200 transition">
+                <Shield className="w-6 h-6 text-blue-600 mb-2" />
+                <h3 className="font-semibold text-slate-900 text-sm">Verifikasi Pengguna</h3>
+                <p className="text-xs text-slate-500 mt-1">Approve/Reject pendaftaran.</p>
               </Link>
-              <Link href="/admin/kasus" className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg border border-slate-700 transition">
-                <FileText className="w-6 h-6 text-green-400 mb-2" />
-                <h3 className="font-semibold text-sm">Review Kasus</h3>
-                <p className="text-xs text-slate-400 mt-1">Saring kasus tidak valid.</p>
+              <Link href="/admin/kasus" className="bg-slate-50 hover:bg-slate-100 p-4 rounded-lg border border-slate-200 transition">
+                <FileText className="w-6 h-6 text-green-600 mb-2" />
+                <h3 className="font-semibold text-slate-900 text-sm">Review Kasus</h3>
+                <p className="text-xs text-slate-500 mt-1">Saring kasus tidak valid.</p>
               </Link>
-              <button disabled className="bg-slate-800/50 p-4 rounded-lg border border-slate-700/50 opacity-70 cursor-not-allowed">
+              <button disabled className="bg-slate-50/50 p-4 rounded-lg border border-slate-100 opacity-70 cursor-not-allowed text-left">
                 <Users className="w-6 h-6 text-purple-400 mb-2" />
-                <h3 className="font-semibold text-sm">Manajemen Role</h3>
-                <p className="text-xs text-slate-400 mt-1">Ban/Suspend akun (Soon)</p>
+                <h3 className="font-semibold text-slate-900 text-sm">Manajemen Role</h3>
+                <p className="text-xs text-slate-500 mt-1">Ban/Suspend akun (Soon)</p>
               </button>
-              <button disabled className="bg-slate-800/50 p-4 rounded-lg border border-slate-700/50 opacity-70 cursor-not-allowed">
-                <FileText className="w-6 h-6 text-yellow-400 mb-2" />
-                <h3 className="font-semibold text-sm">Artikel Edukasi</h3>
-                <p className="text-xs text-slate-400 mt-1">Kelola konten hukum (Soon)</p>
+              <button disabled className="bg-slate-50/50 p-4 rounded-lg border border-slate-100 opacity-70 cursor-not-allowed text-left">
+                <FileText className="w-6 h-6 text-yellow-500 mb-2" />
+                <h3 className="font-semibold text-slate-900 text-sm">Artikel Edukasi</h3>
+                <p className="text-xs text-slate-500 mt-1">Kelola konten hukum (Soon)</p>
               </button>
             </div>
           </div>
