@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Scale, MapPin, User, Briefcase, Clock, FileText,
-  AlertTriangle, CheckCircle2, RefreshCw, AlertCircle, Star, X, Video
+  AlertTriangle, CheckCircle2, RefreshCw, AlertCircle, Star, X, Video, MessageSquare
 } from "lucide-react";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getUser } from "@/lib/api";
+import ChatBox from "@/components/ChatBox";
 
 interface CaseProgress {
   id: string;
@@ -77,6 +78,14 @@ export default function ClientCaseDetailPage() {
   const [caseData, setCaseData] = useState<CaseDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "detail");
+  const currentUser = getUser();
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
 
   // Review modal
   const [showReview, setShowReview] = useState(false);
@@ -130,69 +139,99 @@ export default function ClientCaseDetailPage() {
   const c = caseData;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto px-4 lg:px-0">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="text-slate-400 hover:text-blue-600 transition-colors">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-slate-900 leading-tight">{c.title}</h1>
-          <div className="flex flex-wrap items-center gap-2 mt-1">
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusColor[c.status] || "bg-slate-100 text-slate-700"}`}>
-              {statusLabel[c.status] || c.status}
-            </span>
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${urgencyColor[c.urgency] || "bg-slate-100 text-slate-700"}`}>
-              <AlertTriangle className="w-3 h-3 mr-1" />
-              Urgensi {urgencyLabel[c.urgency] || c.urgency}
-            </span>
-            <span className="text-xs text-slate-500">
-              Diajukan {new Date(c.created_at).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" })}
-            </span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <button onClick={() => router.back()} className="text-slate-400 hover:text-blue-600 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-slate-900 leading-tight">{c.title}</h1>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusColor[c.status] || "bg-slate-100 text-slate-700"}`}>
+                {statusLabel[c.status] || c.status}
+              </span>
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${urgencyColor[c.urgency] || "bg-slate-100 text-slate-700"}`}>
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Urgensi {urgencyLabel[c.urgency] || c.urgency}
+              </span>
+            </div>
           </div>
         </div>
-        {c.status === "CLOSED" && (
-          <button onClick={() => setShowReview(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
-            <Star className="w-4 h-4" /> Beri Ulasan
-          </button>
-        )}
+        
+        <div className="flex items-center gap-2">
+          {c.status === "CLOSED" && (
+            <button onClick={() => setShowReview(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+              <Star className="w-4 h-4" /> Beri Ulasan
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* Tab Switcher */}
+      {c.lawyer && (
+        <div className="flex border-b border-slate-200">
+          <button 
+            onClick={() => setActiveTab("detail")}
+            className={`px-6 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === "detail" ? "border-blue-600 text-blue-600" : "border-transparent text-slate-400 hover:text-slate-600"}`}
+          >
+            Detail Kasus
+          </button>
+          <button 
+            onClick={() => setActiveTab("chat")}
+            className={`px-6 py-3 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${activeTab === "chat" ? "border-blue-600 text-blue-600" : "border-transparent text-slate-400 hover:text-slate-600"}`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            Diskusi Chat
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main info */}
+        {/* Main Content */}
         <div className="lg:col-span-2 space-y-5">
-          {/* Deskripsi */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Deskripsi Kasus</h2>
-            <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{c.description}</p>
-          </div>
+          {activeTab === "chat" && c.lawyer ? (
+            <ChatBox caseId={id} currentUser={currentUser} />
+          ) : (
+            <>
+              {/* Deskripsi */}
+              <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+                <h2 className="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Deskripsi Kasus</h2>
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{c.description}</p>
+              </div>
 
-          {/* Timeline Progress */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wide">Riwayat Progress</h2>
-            {c.progress.length === 0 ? (
-              <p className="text-sm text-slate-400 italic">Belum ada riwayat progress.</p>
-            ) : (
-              <ol className="relative border-l border-slate-200 space-y-5 ml-2">
-                {[...c.progress].reverse().map((p) => (
-                  <li key={p.id} className="ml-4">
-                    <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500"></div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[p.status] || "bg-slate-100 text-slate-600"}`}>
-                        {statusLabel[p.status] || p.status}
-                      </span>
-                      <time className="text-xs text-slate-400">
-                        {new Date(p.created_at).toLocaleDateString("id-ID", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                      </time>
-                    </div>
-                    <p className="text-sm text-slate-700">{p.note}</p>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </div>
+              {/* Timeline Progress */}
+              <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+                <h2 className="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wide">Riwayat Progress</h2>
+                {c.progress.length === 0 ? (
+                  <p className="text-sm text-slate-400 italic">Belum ada riwayat progress.</p>
+                ) : (
+                  <ol className="relative border-l border-slate-200 space-y-5 ml-2">
+                    {[...c.progress].reverse().map((p) => (
+                      <li key={p.id} className="ml-4">
+                        <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500"></div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[p.status] || "bg-slate-100 text-slate-600"}`}>
+                            {statusLabel[p.status] || p.status}
+                          </span>
+                          <time className="text-xs text-slate-400">
+                            {new Date(p.created_at).toLocaleDateString("id-ID", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                          </time>
+                        </div>
+                        <p className="text-sm text-slate-700">{p.note}</p>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            </>
+          )}
+        </div>
 
+        {/* Sidebar info */}
+        <div className="space-y-4">
           {/* Jadwal Konsultasi */}
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
             <h2 className="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wide">Jadwal Konsultasi</h2>
