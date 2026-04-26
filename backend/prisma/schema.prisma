@@ -53,6 +53,7 @@ model User {
 
   lawyer              Lawyer?
   client              Client?
+  chats               Chat[]
 
   @@map("users")
 }
@@ -106,6 +107,12 @@ enum CategoryType {
   NEWS
 }
 
+enum ChatStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
 model Category {
   id         String       @id @default(uuid())
   name       String
@@ -138,6 +145,7 @@ model Case {
   progress       CaseProgress[]
   consultations  Consultation[]
   reviews        Review[]
+  chats          Chat[]
 
   @@map("cases")
 }
@@ -198,4 +206,30 @@ model Review {
   lawyer     Lawyer   @relation(fields: [lawyer_id], references: [id])
 
   @@map("reviews")
+}
+
+model Chat {
+  id         String     @id @default(uuid())
+  case_id    String
+  sender_id  String
+  message    String     @db.Text
+  status     ChatStatus @default(SENT)
+  created_at DateTime   @default(now())
+
+  case       Case       @relation(fields: [case_id], references: [id])
+  sender     User       @relation(fields: [sender_id], references: [id])
+  files      ChatFile[]
+
+  @@map("chats")
+}
+
+model ChatFile {
+  id       String @id @default(uuid())
+  chat_id  String
+  filename String
+  file_url String
+
+  chat     Chat   @relation(fields: [chat_id], references: [id])
+
+  @@map("files")
 }
