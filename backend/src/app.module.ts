@@ -8,6 +8,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CasesModule } from './cases/cases.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatsModule } from './chats/chats.module';
+import { EducationsModule } from './educations/educations.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ChatsModule } from './chats/chats.module';
     CategoriesModule,
     CasesModule,
     ChatsModule,
+    EducationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

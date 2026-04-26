@@ -4,7 +4,6 @@ import { CreateCaseDto } from './dto/create-case.dto';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { CreateConsultationDto } from './dto/create-consultation.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
-// import { CaseStatus, Urgency } from '../prisma/generated/client';
 import { CaseStatus, Urgency } from 'src/prisma/generated/client/enums';
 import { User } from 'src/prisma/generated/client/client';
 
