@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: "Dashboard", href: "/admin", icon: Home },
         { name: "Verifikasi Pengguna", href: "/admin/verifikasi", icon: Shield },
         { name: "Kelola Pengguna", href: "/admin/users", icon: Users },
-        { name: "Kelola Kasus", href: "/admin/kasus", icon: FileText },
+        { name: "Kelola Kategori", href: "/admin/kategori", icon: FileText },
       ];
     }
   };

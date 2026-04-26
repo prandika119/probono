@@ -44,7 +44,8 @@ export default function UsersManagementPage() {
       params.append("limit", limit.toString());
 
       const res = await apiFetch(`/users?${params.toString()}`);
-      setUsers(res.data.users || []);
+      const allUsers: UserData[] = res.data.users || [];
+      setUsers(allUsers.filter((u) => u.role !== "ADMIN"));
     } catch (err: any) {
       setError(err.message || "Gagal mengambil data user");
     } finally {
@@ -119,28 +120,22 @@ export default function UsersManagementPage() {
         <div className="border-b border-slate-200">
           <nav className="-mb-px flex">
             <button onClick={() => { setRoleFilter(""); setPage(1); }}
-              className={`w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
+              className={`w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
                 roleFilter === "" ? "border-blue-500 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               }`}>
               Semua Pengguna
             </button>
             <button onClick={() => { setRoleFilter("CLIENT"); setPage(1); }}
-              className={`w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
+              className={`w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
                 roleFilter === "CLIENT" ? "border-blue-500 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               }`}>
               Klien
             </button>
             <button onClick={() => { setRoleFilter("LAWYER"); setPage(1); }}
-              className={`w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
+              className={`w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
                 roleFilter === "LAWYER" ? "border-blue-500 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               }`}>
               Advokat
-            </button>
-            <button onClick={() => { setRoleFilter("ADMIN"); setPage(1); }}
-              className={`w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
-                roleFilter === "ADMIN" ? "border-blue-500 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
-              }`}>
-              Admin
             </button>
           </nav>
         </div>

@@ -119,21 +119,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="p-4 border border-slate-100 bg-slate-50 rounded-lg">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center">
-                  <FileText className="w-5 h-5 text-slate-400 mr-2" />
-                  <span className="text-sm font-semibold text-slate-900">Moderasi Kasus Baru</span>
-                </div>
-                <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">11 Antrean</span>
-              </div>
-              <p className="text-xs text-slate-500 mt-2">Kasus baru yang perlu direview sebelum diteruskan ke dashboard Rekomendasi Advokat.</p>
-              <div className="mt-3">
-                <Link href="/admin/kasus" className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center">
-                  Review Kasus <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -147,10 +133,10 @@ export default function AdminDashboard() {
                 <h3 className="font-semibold text-slate-900 text-sm">Verifikasi Pengguna</h3>
                 <p className="text-xs text-slate-500 mt-1">Approve/Reject pendaftaran.</p>
               </Link>
-              <Link href="/admin/kasus" className="bg-slate-50 hover:bg-slate-100 p-4 rounded-lg border border-slate-200 transition">
+              <Link href="/admin/kategori" className="bg-slate-50 hover:bg-slate-100 p-4 rounded-lg border border-slate-200 transition">
                 <FileText className="w-6 h-6 text-green-600 mb-2" />
-                <h3 className="font-semibold text-slate-900 text-sm">Review Kasus</h3>
-                <p className="text-xs text-slate-500 mt-1">Saring kasus tidak valid.</p>
+                <h3 className="font-semibold text-slate-900 text-sm">Kelola Kategori</h3>
+                <p className="text-xs text-slate-500 mt-1">Tambah & hapus kategori kasus.</p>
               </Link>
               <button disabled className="bg-slate-50/50 p-4 rounded-lg border border-slate-100 opacity-70 cursor-not-allowed text-left">
                 <Users className="w-6 h-6 text-purple-400 mb-2" />

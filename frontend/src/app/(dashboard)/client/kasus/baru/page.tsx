@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, ArrowRight, ArrowLeft, UploadCloud, AlertTriangle } from "lucide-react";
+import { CheckCircle, ArrowRight, ArrowLeft, UploadCloud, AlertTriangle, RefreshCw } from "lucide-react";
+import { apiFetch } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 const steps = [
   { id: 1, name: "Informasi Dasar" },
@@ -12,8 +14,31 @@ const steps = [
 ];
 
 export default function PengajuanKasusPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+  const [loadingCats, setLoadingCats] = useState(true);
+
+  // Form State
+  const [title, setTitle] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [urgency, setUrgency] = useState("Sedang");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [estimatedLoss, setEstimatedLoss] = useState("");
+  const [opponent, setOpponent] = useState("");
+  const [location, setLocation] = useState("");
+  const [legalGoal, setLegalGoal] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    // Fetch case categories
+    apiFetch("/categories?type=case")
+      .then((res) => setCategories(res.data.categories || []))
+      .catch((err) => console.error("Error fetching categories:", err))
+      .finally(() => setLoadingCats(false));
+  }, []);
 
   const handleNext = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -23,13 +48,57 @@ export default function PengajuanKasusPage() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files).slice(0, 5));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+    
+    try {
+      // 1. Submit Case Data
+      const urgencyMap: Record<string, string> = { "Rendah": "LOW", "Sedang": "MEDIUM", "Tinggi": "HIGH" };
+      const caseBody = {
+        category_id: categoryId,
+        title,
+        description,
+        location,
+        date: date || undefined,
+        opponent: opponent || undefined,
+        estimated_loss: estimatedLoss ? parseFloat(estimatedLoss) : undefined,
+        legal_goal: legalGoal,
+        urgency: urgencyMap[urgency] || "medium"
+      };
+
+      const caseRes = await apiFetch("/cases", {
+        method: "POST",
+        body: caseBody
+      });
+      
+      const caseId = caseRes.data.case.id;
+
+      // 2. Upload Documents iteratively
+      if (files.length > 0) {
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append("document_file", file);
+          await apiFetch(`/cases/${caseId}/documents`, {
+            method: "POST",
+            body: formData,
+          });
+        }
+      }
+
+      alert("Pengajuan kasus berhasil dikirim!");
+      router.push("/client/kasus");
+    } catch (err: any) {
+      alert("Gagal mengirim pengajuan kasus: " + err.message);
+    } finally {
       setIsLoading(false);
-      window.location.href = "/client/kasus"; 
-    }, 2000);
+    }
   };
 
   return (
@@ -89,19 +158,16 @@ export default function PengajuanKasusPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700">Judul Kasus</label>
                     <p className="text-xs text-slate-500 mb-2">Tuliskan inti permasalahan hukum Anda dengan singkat.</p>
-                    <input type="text" required minLength={10} className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Contoh: Sengketa Tanah Waris dengan Keluarga" />
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required minLength={10} className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Contoh: Sengketa Tanah Waris dengan Keluarga" />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700">Kategori Hukum</label>
-                    <select required className="mt-1 block w-full px-3 py-3 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border bg-white">
+                    <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required className="mt-1 block w-full px-3 py-3 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border bg-white">
                       <option value="">Pilih Kategori</option>
-                      <option value="pidana">Hukum Pidana</option>
-                      <option value="perdata">Hukum Perdata</option>
-                      <option value="ketenagakerjaan">Hukum Ketenagakerjaan</option>
-                      <option value="keluarga">Hukum Keluarga (Cerai, Waris)</option>
-                      <option value="tanah">Tanah & Properti</option>
-                      <option value="lainnya">Lainnya</option>
+                      {loadingCats ? <option disabled>Memuat...</option> : categories.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
                     </select>
                   </div>
 
@@ -109,8 +175,8 @@ export default function PengajuanKasusPage() {
                     <label className="block text-sm font-medium text-slate-700">Tingkat Urgensi</label>
                     <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-3">
                       {['Rendah', 'Sedang', 'Tinggi'].map((level) => (
-                        <label key={level} className="relative flex cursor-pointer border border-slate-200 rounded-lg bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
-                          <input type="radio" name="urgency" value={level} className="sr-only" required />
+                        <label key={level} className={`relative flex cursor-pointer border ${urgency === level ? 'border-blue-500 ring-1 ring-blue-500 bg-blue-50' : 'border-slate-200'} rounded-lg p-4 shadow-sm focus:outline-none hover:bg-slate-50`}>
+                          <input type="radio" name="urgency" value={level} checked={urgency === level} onChange={() => setUrgency(level)} className="sr-only" required />
                           <div className="flex w-full items-center justify-between">
                             <div className="flex items-center">
                               <div className="text-sm">
@@ -121,7 +187,6 @@ export default function PengajuanKasusPage() {
                               <AlertTriangle className="h-5 w-5" />
                             </div>
                           </div>
-                          {/* Checked ring decoration handled via CSS focus-within ideally, simplified here */}
                         </label>
                       ))}
                     </div>
@@ -141,13 +206,13 @@ export default function PengajuanKasusPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700">Deskripsi Kasus & Kronologi Singkat</label>
                     <p className="text-xs text-slate-500 mb-2">Jelaskan apa yang terjadi sejak awal hingga masalah ini muncul.</p>
-                    <textarea rows={6} required minLength={50} className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Pada tanggal... saya mengalami..."></textarea>
+                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} required minLength={50} className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Pada tanggal... saya mengalami..."></textarea>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700">Tanggal Kejadian Pertama</label>
-                      <input type="date" className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none bg-white" />
+                      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none bg-white" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700">Estimasi Kerugian (Jika ada)</label>
@@ -155,7 +220,7 @@ export default function PengajuanKasusPage() {
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <span className="text-slate-500 sm:text-sm">Rp</span>
                         </div>
-                        <input type="number" className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="1000000" />
+                        <input type="number" value={estimatedLoss} onChange={(e) => setEstimatedLoss(e.target.value)} className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="1000000" />
                       </div>
                     </div>
                   </div>
@@ -163,11 +228,11 @@ export default function PengajuanKasusPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700">Pihak Lawan (Jika ada)</label>
-                      <input type="text" className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Nama perusahaan atau mantan" />
+                      <input type="text" value={opponent} onChange={(e) => setOpponent(e.target.value)} className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Nama perusahaan atau mantan" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700">Lokasi Kejadian / Sengketa</label>
-                      <input type="text" required className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Nama kota atau keterangan lokasi" />
+                      <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full px-3 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Nama kota atau keterangan lokasi" />
                     </div>
                   </div>
                 </motion.div>
@@ -185,23 +250,29 @@ export default function PengajuanKasusPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700">Tujuan Bantuan Hukum</label>
                     <p className="text-xs text-slate-500 mb-2">Apa harapan Anda dari bantuan hukum ini? (Misal: Konsultasi, Pendampingan Sidang, Somasi).</p>
-                    <textarea rows={3} required className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Saya berharap dapat dimediasi terlebih dahulu..."></textarea>
+                    <textarea value={legalGoal} onChange={(e) => setLegalGoal(e.target.value)} rows={3} required className="focus:ring-blue-500 focus:border-blue-500 block w-full px-4 sm:text-sm border-slate-300 rounded-md py-3 border outline-none" placeholder="Saya berharap dapat dimediasi terlebih dahulu..."></textarea>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Upload Dokumen Bukti Pendukung</label>
                     <p className="text-xs text-slate-500 mb-4">Maksimal 5 file. Bisa berupa foto, perjanjian, laporan kepolisian, dll.</p>
-                    <div className="flex justify-center px-6 pt-8 pb-10 border-2 border-slate-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-slate-50 cursor-pointer">
-                      <div className="space-y-1 text-center">
-                        <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
-                        <div className="flex text-sm text-slate-600 justify-center">
-                          <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 px-1 py-1 px-2 border shadow-sm">
-                            <span>Upload Dokumen</span>
-                            <input id="file-upload" name="file-upload" type="file" multiple className="sr-only" accept="image/*, application/pdf" />
-                          </label>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-2">PNG, JPG, PDF up to 10MB total</p>
+                    <div className="flex justify-center flex-col px-6 pt-8 pb-10 border-2 border-slate-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-slate-50 cursor-pointer text-center relative items-center">
+                      <UploadCloud className="mx-auto h-12 w-12 text-slate-400 mb-2" />
+                      <div className="flex text-sm text-slate-600 justify-center">
+                        <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 p-2 border shadow-sm">
+                          <span>{files.length > 0 ? `${files.length} File Terpilih` : "Pilih Dokumen"}</span>
+                          <input id="file-upload" name="file-upload" type="file" onChange={handleFileChange} multiple className="sr-only" accept="image/*, application/pdf" />
+                        </label>
                       </div>
+                      <p className="text-xs text-slate-500 mt-2">PNG, JPG, PDF up to 10MB total</p>
+                      {files.length > 0 && (
+                        <div className="mt-4 text-xs text-left w-full pl-4 bg-white border border-slate-200 rounded p-2">
+                          <p className="font-semibold mb-1 text-slate-700">File akan diunggah:</p>
+                          <ul className="list-disc pl-4 text-slate-600">
+                            {files.map((file, i) => <li key={i}>{file.name}</li>)}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -225,7 +296,7 @@ export default function PengajuanKasusPage() {
               className="flex items-center px-6 py-2.5 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-70 disabled:shadow-none"
             >
               {currentStep === 3 ? (
-                isLoading ? "Mensubmit..." : "Ajukan Kasus Sekarang"
+                isLoading ? <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Mensubmit...</> : "Ajukan Kasus Sekarang"
               ) : (
                 <>Selanjutnya <ArrowRight className="h-4 w-4 ml-2" /></>
               )}
