@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Scale, MapPin, User, Clock, FileText,
   AlertTriangle, CheckCircle2, RefreshCw, AlertCircle,
-  Paperclip, X
+  Paperclip, X, Video
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 
@@ -20,6 +20,16 @@ interface CaseDocument {
   id: string;
   filename: string;
   file_url: string;
+}
+
+interface CaseConsultation {
+  id: string;
+  title: string;
+  consultation_at: string;
+  is_online: boolean;
+  link_meet?: string;
+  location?: string;
+  notes?: string;
 }
 
 interface CaseDetail {
@@ -39,6 +49,7 @@ interface CaseDetail {
   category?: { name: string };
   documents: CaseDocument[];
   progress: CaseProgress[];
+  consultations: CaseConsultation[];
 }
 
 const statusLabel: Record<string, string> = {
@@ -147,6 +158,7 @@ export default function AdvokatCaseDetailPage() {
       alert("Jadwal konsultasi berhasil ditambahkan!");
       setShowConsultModal(false);
       setConsultTitle(""); setConsultDate(""); setConsultNotes(""); setConsultLink(""); setConsultLocation("");
+      fetchCase();
     } catch (err: any) {
       alert("Gagal membuat konsultasi: " + err.message);
     } finally {
@@ -256,6 +268,52 @@ export default function AdvokatCaseDetailPage() {
                   </li>
                 ))}
               </ol>
+            )}
+          </div>
+
+          {/* Jadwal Konsultasi */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wide">Jadwal Konsultasi</h2>
+            {c.consultations.length === 0 ? (
+              <p className="text-sm text-slate-400 italic">Belum ada jadwal konsultasi.</p>
+            ) : (
+              <div className="space-y-4">
+                {c.consultations.map((con) => (
+                  <div key={con.id} className="p-4 border border-slate-100 rounded-lg bg-slate-50/50">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-sm font-bold text-slate-900">{con.title}</h3>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${con.is_online ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
+                        {con.is_online ? 'Online' : 'Offline'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-500">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-[18px] h-[18px] shrink-0" />
+                        {new Date(con.consultation_at).toLocaleString("id-ID", { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                      {con.is_online ? (
+                        <div className="flex items-center gap-2 text-blue-600">
+                          <Video className="w-[18px] h-[18px] shrink-0" />
+                          <a href={con.link_meet} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                            {con.link_meet || 'Link belum tersedia'}
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-[18px] h-[18px] shrink-0 text-orange-500" />
+                          <span className="truncate">{con.location || '-'}</span>
+                        </div>
+                      )}
+                    </div>
+                    {con.notes && (
+                      <div className="mt-3 pt-3 border-t border-slate-200/50 text-xs text-slate-600">
+                        <p className="font-semibold mb-1 italic text-slate-400">Catatan:</p>
+                        <p>{con.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
