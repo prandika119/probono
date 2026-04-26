@@ -54,6 +54,7 @@ model User {
   lawyer              Lawyer?
   client              Client?
   chats               Chat[]
+  educations          Education[]
 
   @@map("users")
 }
@@ -118,6 +119,7 @@ model Category {
   name       String
   type       CategoryType
   cases      Case[]
+  educations Education[]
 
   @@map("categories")
 }
@@ -232,4 +234,20 @@ model ChatFile {
   chat     Chat   @relation(fields: [chat_id], references: [id])
 
   @@map("files")
+}
+
+model Education {
+  id          String   @id @default(uuid())
+  category_id String
+  author_id   String
+  title       String
+  content     String   @db.Text
+  image_url   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  category    Category @relation(fields: [category_id], references: [id])
+  author      User     @relation(fields: [author_id], references: [id])
+
+  @@map("educations")
 }
