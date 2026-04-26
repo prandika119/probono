@@ -10,12 +10,11 @@ export class UsersService {
 
   async findAll(role?: string, verification_status?: string, is_active?: boolean, page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit;
-    
     const whereClause: any = {};
     if (role) whereClause.role = role.toUpperCase();
     if (verification_status) whereClause.verification_status = verification_status.toUpperCase();
-    if (is_active) whereClause.is_active = is_active;
-
+    if (is_active != null) whereClause.is_active = is_active;
+    
     const [users, total_items] = await Promise.all([
       this.prisma.user.findMany({
         where: whereClause,

@@ -7,6 +7,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CasesModule } from './cases/cases.module';
 import { ConfigModule } from '@nestjs/config';
+import { ChatsModule } from './chats/chats.module';
+
 @Module({
   imports: [
     AuthModule,
@@ -18,6 +20,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CategoriesModule,
     CasesModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

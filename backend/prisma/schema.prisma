@@ -53,6 +53,7 @@ model User {
 
   lawyer              Lawyer?
   client              Client?
+  chats               Chat[]
 
   @@map("users")
 }
@@ -80,9 +81,10 @@ model Client {
   user_id     String   @unique
   sktm_upload String?
 
-  user        User     @relation(fields: [user_id], references: [id])
-  cases       Case[]
-  reviews     Review[]
+  user          User           @relation(fields: [user_id], references: [id])
+  cases         Case[]
+  reviews       Review[]
+  consultations Consultation[]
 
   @@map("clients")
 }
@@ -103,6 +105,12 @@ enum Urgency {
 enum CategoryType {
   CASE
   NEWS
+}
+
+enum ChatStatus {
+  SENT
+  DELIVERED
+  READ
 }
 
 model Category {
@@ -137,6 +145,7 @@ model Case {
   progress       CaseProgress[]
   consultations  Consultation[]
   reviews        Review[]
+  chats          Chat[]
 
   @@map("cases")
 }
@@ -168,6 +177,7 @@ model Consultation {
   id              String   @id @default(uuid())
   case_id         String
   lawyer_id       String
+  client_id       String
   title           String
   consultation_at DateTime
   is_online       Boolean  @default(false)
@@ -177,6 +187,7 @@ model Consultation {
 
   case            Case     @relation(fields: [case_id], references: [id])
   lawyer          Lawyer   @relation(fields: [lawyer_id], references: [id])
+  client          Client   @relation(fields: [client_id], references: [id])
 
   @@map("consultations")
 }
@@ -195,4 +206,30 @@ model Review {
   lawyer     Lawyer   @relation(fields: [lawyer_id], references: [id])
 
   @@map("reviews")
+}
+
+model Chat {
+  id         String     @id @default(uuid())
+  case_id    String
+  sender_id  String
+  message    String     @db.Text
+  status     ChatStatus @default(SENT)
+  created_at DateTime   @default(now())
+
+  case       Case       @relation(fields: [case_id], references: [id])
+  sender     User       @relation(fields: [sender_id], references: [id])
+  files      ChatFile[]
+
+  @@map("chats")
+}
+
+model ChatFile {
+  id       String @id @default(uuid())
+  chat_id  String
+  filename String
+  file_url String
+
+  chat     Chat   @relation(fields: [chat_id], references: [id])
+
+  @@map("files")
 }

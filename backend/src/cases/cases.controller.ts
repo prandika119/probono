@@ -9,6 +9,18 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/prisma/generated/client/enums';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+
+const uploadOptions = {
+  storage: diskStorage({
+    destination: './uploads/cases',
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+    },
+  }),
+};
 
 @Controller('cases')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -50,7 +62,7 @@ export class CasesController {
   }
 
   @Post(':id/documents')
-  @UseInterceptors(FileInterceptor('document_file'))
+  @UseInterceptors(FileInterceptor('document_file', uploadOptions))
   async uploadDocument(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,

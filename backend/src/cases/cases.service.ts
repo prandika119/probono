@@ -303,18 +303,28 @@ export class CasesService {
   }
 
   async addConsultation(caseId: string, dto: CreateConsultationDto, userId: string) {
-    const lawyer = await this.prisma.lawyer.findUnique({ where: { user_id: userId } });
-    if (!lawyer) throw new UnauthorizedException('Not a lawyer');
-
-    const targetCase = await this.prisma.case.findUnique({ where: { id: caseId } });
-    if (!targetCase || targetCase.lawyer_id !== lawyer.id) {
+    const targetCase = await this.prisma.case.findUnique({ 
+        where: { id: caseId }, 
+        include: { client: { include: { user: true } }, lawyer: { include: { user: true } } } 
+    });
+    
+    if (!targetCase) {
+        throw new NotFoundException('Case not found');
+    }
+    
+    if (targetCase.lawyer?.user?.id !== userId && targetCase.client.user.id !== userId) {
         throw new ForbiddenException('You are not assigned to this case');
+    }
+
+    if (!targetCase.lawyer_id) {
+        throw new BadRequestException('Cannot add consultation, case has no lawyer');
     }
 
     const consult = await this.prisma.consultation.create({
       data: {
         case_id: caseId,
-        lawyer_id: lawyer.id,
+        lawyer_id: targetCase.lawyer_id, 
+        client_id: targetCase.client_id,
         title: dto.title,
         consultation_at: new Date(dto.consultation_at),
         is_online: dto.is_online || false,
