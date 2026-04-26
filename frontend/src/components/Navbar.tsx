@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, LayoutDashboard, Menu, X } from "lucide-react";
+import { LogOut, LayoutDashboard, Menu, X, ChevronRight } from "lucide-react";
 
 interface UserInfo {
   name: string;
@@ -22,10 +22,15 @@ function getDashboardPath(role: string): string {
 export default function Navbar() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Baca user dari localStorage (sudah di-set saat login/register)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+
     const raw = localStorage.getItem("user");
     if (raw) {
       try {
@@ -35,6 +40,7 @@ export default function Navbar() {
         setUser(null);
       }
     }
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = () => {
@@ -50,60 +56,76 @@ export default function Navbar() {
   const firstName = user?.name?.split(" ")[0] ?? "";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-white/20 shadow-sm transition-all duration-300">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 flex justify-center ${
+      scrolled ? "pt-6 px-4" : "pt-0 px-0"
+    }`}>
+      <div className={`container mx-auto transition-all duration-700 ease-in-out ${
+        scrolled 
+          ? "max-w-5xl bg-white/70 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40 rounded-[2.5rem] px-12 h-16" 
+          : "max-w-7xl bg-white/0 border-b border-transparent px-10 lg:px-12 h-24"
+      } flex items-center justify-between`}>
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-brand-900 text-white flex items-center justify-center rounded-xl font-bold text-xl group-hover:scale-105 transition-transform shadow-premium">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 bg-blue-600 text-white flex items-center justify-center rounded-xl font-bold text-lg group-hover:rotate-6 transition-transform shadow-lg shadow-blue-200">
             PB
           </div>
-          <span className="font-bold text-2xl text-brand-900 tracking-tight">
-            Pro<span className="text-accent">Bono</span>
+          <span className={`font-bold text-xl tracking-tighter transition-colors duration-500 ${scrolled ? "text-slate-900" : "text-slate-900"}`}>
+            Pro<span className="text-blue-600">Bono</span>
           </span>
         </Link>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm font-medium text-brand-900 hover:text-accent transition-colors">Beranda</Link>
-          <Link href="#layanan" className="text-sm font-medium text-slate-600 hover:text-brand-900 transition-colors">Layanan</Link>
-          <Link href="#cara-kerja" className="text-sm font-medium text-slate-600 hover:text-brand-900 transition-colors">Cara Kerja</Link>
-          <Link href="#testimoni" className="text-sm font-medium text-slate-600 hover:text-brand-900 transition-colors">Testimoni</Link>
+        <div className="hidden lg:flex items-center gap-12">
+          {[
+            { name: "Beranda", href: "/" },
+            { name: "Layanan", href: "#layanan" },
+            { name: "Cara Kerja", href: "#cara-kerja" },
+            { name: "Testimoni", href: "#testimoni" }
+          ].map((link) => (
+            <Link 
+              key={link.name}
+              href={link.href} 
+              className="relative text-[11px] font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest group"
+            >
+              {link.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+          ))}
         </div>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-8">
           {user ? (
-            // Sudah login → tampilkan nama + ke dashboard + logout
             <>
               <Link
                 href={dashboardPath}
-                className="flex items-center gap-2 text-sm font-semibold text-brand-900 hover:text-accent px-4 py-2 transition-colors"
+                className="flex items-center gap-2 text-[11px] font-bold text-slate-900 hover:text-blue-600 px-3 py-2 transition-colors uppercase tracking-wider"
               >
                 <LayoutDashboard className="h-4 w-4" />
-                Halo, {firstName}
+                Dashboard
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-200 px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center gap-2 text-[11px] font-bold text-slate-400 hover:text-red-600 px-3 py-2 rounded-xl transition-colors border border-slate-100 hover:border-red-100 uppercase tracking-wider"
               >
                 <LogOut className="h-4 w-4" />
                 Keluar
               </button>
             </>
           ) : (
-            // Belum login → Masuk + Daftar
             <>
               <Link
                 href="/auth/login"
-                className="text-sm font-semibold text-brand-900 hover:text-brand-800 px-4 py-2 transition-colors"
+                className="text-[11px] font-bold text-slate-900 hover:text-blue-600 px-4 py-2 transition-colors uppercase tracking-widest"
               >
                 Masuk
               </Link>
               <Link
                 href="/auth/register/client"
-                className="btn-primary py-2.5 px-5 text-sm inline-block text-center rounded-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 text-[11px] inline-flex items-center gap-2 text-center rounded-xl transition-all shadow-lg shadow-blue-100 hover:translate-y-[-2px] uppercase tracking-widest"
               >
                 Minta Bantuan
+                <ChevronRight className="w-3 h-3" />
               </Link>
             </>
           )}
@@ -111,40 +133,40 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-brand-900 p-2"
+          className="lg:hidden text-slate-900 p-2"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
           {mobileOpen
-            ? <X className="w-6 h-6" />
-            : <Menu className="w-6 h-6" />
+            ? <X className="w-7 h-7" />
+            : <Menu className="w-7 h-7" />
           }
         </button>
       </div>
 
       {/* Mobile Dropdown */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-3 shadow-md">
-          <Link href="/" className="block text-sm font-medium text-slate-700 py-2" onClick={() => setMobileOpen(false)}>Beranda</Link>
-          <Link href="#layanan" className="block text-sm font-medium text-slate-600 py-2" onClick={() => setMobileOpen(false)}>Layanan</Link>
-          <Link href="#cara-kerja" className="block text-sm font-medium text-slate-600 py-2" onClick={() => setMobileOpen(false)}>Cara Kerja</Link>
-          <Link href="#testimoni" className="block text-sm font-medium text-slate-600 py-2" onClick={() => setMobileOpen(false)}>Testimoni</Link>
-          <div className="border-t border-slate-100 pt-3 space-y-2">
+        <div className="absolute top-24 left-6 right-6 lg:hidden bg-white rounded-3xl border border-slate-100 p-8 space-y-6 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <Link href="/" className="block text-lg font-bold text-slate-900 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Beranda</Link>
+          <Link href="#layanan" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Layanan</Link>
+          <Link href="#cara-kerja" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Cara Kerja</Link>
+          <Link href="#testimoni" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Testimoni</Link>
+          <div className="border-t border-slate-100 pt-8 space-y-4">
             {user ? (
               <>
                 <Link
                   href={dashboardPath}
-                  className="flex items-center gap-2 w-full text-sm font-semibold text-brand-900 py-2"
+                  className="flex items-center gap-3 w-full text-lg font-bold text-slate-900 py-2 uppercase tracking-widest"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard ({firstName})
+                  <LayoutDashboard className="h-5 w-5 text-blue-600" />
+                  Dashboard
                 </Link>
                 <button
                   onClick={() => { handleLogout(); setMobileOpen(false); }}
-                  className="flex items-center gap-2 w-full text-sm font-medium text-red-600 py-2"
+                  className="flex items-center gap-3 w-full text-lg font-bold text-red-500 py-2 uppercase tracking-widest"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-5 w-5" />
                   Keluar
                 </button>
               </>
@@ -152,14 +174,14 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="block w-full text-center text-sm font-semibold text-brand-900 border border-slate-200 rounded-lg py-2.5"
+                  className="block w-full text-center text-lg font-bold text-slate-900 border-2 border-slate-100 rounded-2xl py-4 uppercase tracking-widest"
                   onClick={() => setMobileOpen(false)}
                 >
                   Masuk
                 </Link>
                 <Link
                   href="/auth/register/client"
-                  className="block w-full text-center btn-primary text-sm rounded-lg py-2.5"
+                  className="block w-full text-center bg-blue-600 text-white font-bold text-lg rounded-2xl py-4 shadow-xl shadow-blue-200 uppercase tracking-widest"
                   onClick={() => setMobileOpen(false)}
                 >
                   Minta Bantuan

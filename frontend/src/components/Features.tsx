@@ -20,32 +20,30 @@ export default function Features() {
   ];
 
   return (
-    <section id="layanan" className="py-24 relative overflow-hidden bg-white">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 skew-x-12 translate-x-32 -z-10"></div>
-      
-      <div className="container mx-auto px-4 text-center">
+    <section id="layanan" className="py-32 relative overflow-hidden bg-slate-50">
+      <div className="container mx-auto px-6 lg:px-8 max-w-7xl text-center">
         <div className="mb-16">
-          <span className="inline-block px-4 py-2 text-sm font-semibold tracking-wide uppercase rounded-full bg-accent/10 text-accent mb-4">
-            Keunggulan Kami
-          </span>
-          <h2 className="text-3xl lg:text-4xl font-bold text-brand-900 border-b-4 border-accent-gold pb-4 inline-block">
-            Mengapa Memilih ProBono?
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase rounded-full bg-blue-50 text-blue-600 mb-4 border border-blue-100">
+            Layanan Unggulan
+          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">
+            Standar Baru Dalam <br /> Layanan Pro Bono
           </h2>
+          <div className="h-1 w-16 bg-blue-600 mx-auto mt-4 rounded-full"></div>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid md:grid-cols-3 gap-10">
           {features.map((f, i) => (
-            <div key={i} className="group p-8 rounded-2xl bg-white transition-all duration-300 hover:-translate-y-2 border border-slate-100 shadow-sm hover:shadow-premium relative z-10">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-accent-gold/5 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+            <div key={i} className="group p-10 rounded-[2rem] bg-white transition-all duration-500 hover:-translate-y-3 border border-slate-200 shadow-sm hover:shadow-2xl hover:shadow-blue-100/50 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0 group-hover:scale-150 transition-transform duration-700"></div>
               
-              <div className="w-16 h-16 bg-brand-900 rounded-xl flex items-center justify-center text-white mb-6 group-hover:bg-accent transition-colors duration-300">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={f.icon}></path>
+              <div className="relative z-10 w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 group-hover:bg-blue-600 transition-all duration-500 shadow-xl group-hover:rotate-6">
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={f.icon}></path>
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-brand-900 mb-4">{f.title}</h3>
-              <p className="text-slate-600 leading-relaxed">{f.desc}</p>
+              <h3 className="relative z-10 text-2xl font-extrabold text-slate-900 mb-5 group-hover:text-blue-600 transition-colors">{f.title}</h3>
+              <p className="relative z-10 text-slate-500 leading-relaxed font-medium">{f.desc}</p>
             </div>
           ))}
         </div>

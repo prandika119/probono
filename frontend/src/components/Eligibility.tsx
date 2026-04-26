@@ -20,26 +20,29 @@ export default function Eligibility() {
   ];
 
   return (
-    <section id="kriteria" className="py-24 bg-white relative">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+    <section id="kriteria" className="py-32 bg-slate-50 relative">
+      <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col lg:flex-row items-center gap-20">
           <div className="w-full lg:w-1/2">
-            <h2 className="text-3xl lg:text-4xl font-bold text-brand-900 mb-6">Siapa yang Berhak <br/>Menerima Bantuan?</h2>
-            <p className="text-slate-600 leading-relaxed mb-8 text-lg">
-              Sesuai dengan Undang-Undang Bantuan Hukum, layanan pro bono ini didedikasikan bagi mereka yang memiliki keterbatasan finansial namun membutuhkan perlindungan hukum yang setara.
+            <div className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold tracking-wider uppercase rounded-full bg-blue-50 text-blue-600 mb-6 border border-blue-100">
+              Kriteria Penerima
+            </div>
+            <h2 className="text-3xl lg:text-5xl font-black text-slate-900 mb-8 leading-tight">Siapa yang Berhak <br/>Menerima Bantuan?</h2>
+            <p className="text-slate-500 leading-relaxed mb-10 text-xl font-medium">
+              Sesuai dengan Undang-Undang Bantuan Hukum, layanan pro bono ini didedikasikan bagi mereka yang membutuhkan perlindungan hukum namun terkendala keterbatasan finansial.
             </p>
             
             <div className="space-y-6">
               {criteria.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4 p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/30 hover:bg-white hover:shadow-premium transition-all duration-300 group">
-                  <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path>
+                <div key={idx} className="flex items-start gap-6 p-8 rounded-3xl bg-white border border-slate-200 hover:border-blue-600/30 hover:shadow-2xl hover:shadow-blue-100/50 transition-all duration-500 group">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-blue-200">
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={item.icon}></path>
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-brand-900 mb-2">{item.title}</h4>
-                    <p className="text-slate-600 leading-relaxed text-sm">{item.desc}</p>
+                    <h4 className="text-2xl font-extrabold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{item.title}</h4>
+                    <p className="text-slate-500 leading-relaxed font-medium">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -48,20 +51,21 @@ export default function Eligibility() {
           
           <div className="w-full lg:w-1/2">
             <div className="relative">
-              <div className="absolute inset-0 bg-brand-900 rounded-[2rem] transform translate-x-4 translate-y-4"></div>
-              <div className="relative bg-slate-100 rounded-[2rem] overflow-hidden aspect-[4/3] flex items-center justify-center border border-slate-200">
-                {/* Temporary Placeholder for Illustration */}
-                <div className="text-center p-8">
-                  <svg className="w-32 h-32 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  <p className="text-slate-500 font-medium">Ilustrasi Kesetaraan Hukum</p>
-                </div>
+              <div className="absolute inset-0 bg-blue-600 rounded-[3rem] transform translate-x-4 translate-y-4 opacity-10"></div>
+              <div className="relative bg-white rounded-[3rem] overflow-hidden aspect-[4/3] flex items-center justify-center border-8 border-white shadow-2xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=1200&auto=format&fit=crop" 
+                  alt="Keadilan" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
               </div>
               
-              <div className="absolute -bottom-6 -left-6 glass-card p-6 rounded-2xl flex items-center gap-4 animate-bounce-slow">
-                <div className="text-4xl font-black text-brand-900">100%</div>
-                <div className="text-sm font-bold text-slate-600">Gratis tanpa pungutan<br/>biaya apapun</div>
+              <div className="absolute -bottom-8 -left-8 bg-white p-8 rounded-3xl flex items-center gap-6 shadow-2xl border border-slate-100 animate-bounce-slow">
+                <div className="text-5xl font-black text-blue-600">100%</div>
+                <div className="text-sm font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+                  Tanpa Pungutan <br /> Biaya Apapun
+                </div>
               </div>
             </div>
           </div>
