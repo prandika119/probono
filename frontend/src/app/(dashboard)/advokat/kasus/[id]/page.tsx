@@ -81,6 +81,7 @@ export default function AdvokatCaseDetailPage() {
   const [consultLocation, setConsultLocation] = useState("");
   const [showConsultModal, setShowConsultModal] = useState(false);
   const [savingConsult, setSavingConsult] = useState(false);
+  const [accepting, setAccepting] = useState(false);
 
   const fetchCase = () => {
     if (!id) return;
@@ -94,6 +95,20 @@ export default function AdvokatCaseDetailPage() {
   useEffect(() => {
     fetchCase();
   }, [id]);
+
+  const handleAcceptCase = async () => {
+    if (!confirm("Apakah Anda yakin ingin menangani kasus ini?")) return;
+    setAccepting(true);
+    try {
+      await apiFetch(`/cases/${id}/accept`, { method: "POST" });
+      alert("Kasus berhasil Anda ambil!");
+      fetchCase();
+    } catch (err: any) {
+      alert("Gagal mengambil kasus: " + err.message);
+    } finally {
+      setAccepting(false);
+    }
+  };
 
   const handleSaveProgress = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,10 +189,17 @@ export default function AdvokatCaseDetailPage() {
             </span>
           </div>
         </div>
-        {!isClosed && (
+        {!isClosed && c.lawyer && (
           <button onClick={() => setShowConsultModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shrink-0">
             <Clock className="w-4 h-4" /> Buat Konsultasi
+          </button>
+        )}
+        {!isClosed && !c.lawyer && (
+          <button onClick={handleAcceptCase} disabled={accepting}
+            className="flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-md shrink-0 disabled:opacity-70">
+            {accepting ? <RefreshCw className="w-4 h-4 animate-spin mr-1" /> : <Scale className="w-4 h-4 mr-1" />}
+            Ambil Kasus Ini
           </button>
         )}
       </div>
@@ -192,7 +214,7 @@ export default function AdvokatCaseDetailPage() {
           </div>
 
           {/* Update Progress Form */}
-          {!isClosed && (
+          {!isClosed && c.lawyer && (
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
               <h2 className="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wide">Update Progress</h2>
               <form onSubmit={handleSaveProgress} className="space-y-3">

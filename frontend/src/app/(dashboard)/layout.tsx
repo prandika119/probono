@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu, X, Home, FileText,
-  MessageSquare, Bell, User, LogOut, Scale, Camera, Users, Shield
+  MessageSquare, Bell, User, LogOut, Scale, Users, Shield, Pencil
 } from "lucide-react";
 import { apiFetch, getToken } from "@/lib/api";
-import { useRef } from "react";
 
 interface UserProfile {
   id: string;
@@ -22,8 +21,8 @@ interface UserProfile {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -45,6 +44,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Sync sidebar state when profile page dispatches an update event
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      setUser(prev => prev ? { ...prev, ...e.detail } : prev);
+    };
+    window.addEventListener("probono:profile-updated", handler as EventListener);
+    return () => window.removeEventListener("probono:profile-updated", handler as EventListener);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -53,32 +72,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/auth/login");
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !user?.id) return;
-
-    setUploadingImage(true);
-    try {
-      const formData = new FormData();
-      formData.append("profile_image", file);
-
-      const res = await apiFetch(`/users/${user.id}/upload-profile-image`, {
-        method: "POST",
-        body: formData,
-      });
-
-      // Update user state and localStorage
-      const updatedUser = { ...user, profile_image: res.data.url };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      alert("Foto profil berhasil diperbarui!");
-    } catch (err: any) {
-      alert("Gagal mengunggah foto: " + err.message);
-    } finally {
-      setUploadingImage(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
 
   const getNavigation = () => {
     if (roleFromPath === "client") {
@@ -147,45 +140,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <div className="flex flex-1 flex-col overflow-y-auto px-4 py-6">
-          {/* User info */}
-          <div className="mb-8 px-2 flex items-start gap-3">
-            <div 
-              className="relative h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-slate-200 shrink-0 cursor-pointer overflow-hidden group"
-              onClick={() => fileInputRef.current?.click()}
-              title="Ganti Foto Profil"
-            >
+          {/* User info card — clickable, links to profile page */}
+          <Link
+            href={`/${roleFromPath}/profil`}
+            className="mb-8 px-2 flex items-start gap-3 group rounded-xl hover:bg-slate-50 py-2 -mx-2 transition-colors"
+          >
+            <div className="relative h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-slate-200 shrink-0 overflow-hidden">
               {user?.profile_image ? (
-                /* Note: In a real app we might need full URL, we assume API proxy handles /uploads */
                 <img src={`/api/v1${user.profile_image}`} alt={displayName} className="h-full w-full object-cover" />
               ) : (
-                <div className="bg-blue-600 h-full w-full flex items-center justify-center">
+                <div className="bg-slate-100 h-full w-full flex items-center justify-center text-slate-600">
                   {initials || "?"}
                 </div>
               )}
-              {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                {uploadingImage ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Camera className="w-4 h-4 text-white" />
-                )}
-              </div>
             </div>
-            
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
-              accept="image/png, image/jpeg" 
-              onChange={handleImageUpload}
-            />
 
             <div className="min-w-0 flex-1 pt-1">
               <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
               <p className="text-xs text-slate-500 capitalize">{displayRole}</p>
               {verificationBadge}
             </div>
-          </div>
+            <Pencil className="h-3.5 w-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 shrink-0" />
+          </Link>
 
           <nav className="flex-1 space-y-1">
             {navigation.map((item) => {
@@ -230,14 +206,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span className="hidden lg:block text-sm font-semibold leading-6 text-slate-900 truncate max-w-[160px]">
                 {displayName}
               </span>
-              <div 
-                className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden bg-blue-600 cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {user?.profile_image ? (
-                  <img src={`/api/v1${user.profile_image}`} alt={displayName} className="h-full w-full object-cover" />
-                ) : (
-                  initials || <User className="h-4 w-4" />
+              {/* Avatar dropdown */}
+              <div ref={dropdownRef} className="relative">
+                <button
+                  onClick={() => setDropdownOpen(prev => !prev)}
+                  className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-700 text-xs font-bold shrink-0 overflow-hidden bg-slate-100 hover:bg-slate-200 transition-all"
+                >
+                  {user?.profile_image ? (
+                    <img src={`/api/v1${user.profile_image}`} alt={displayName} className="h-full w-full object-cover" />
+                  ) : (
+                    initials || <User className="h-4 w-4" />
+                  )}
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-50">
+                    <Link
+                      href={`/${roleFromPath}/profil`}
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <User className="h-4 w-4 text-slate-400" />
+                      Edit Profil
+                    </Link>
+                    <div className="h-px bg-slate-100 my-1" />
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Keluar
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
