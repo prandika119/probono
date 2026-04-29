@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu, X, Home, FileText,
-  MessageSquare, Bell, User, LogOut, Scale, Users, Shield, Pencil
+  MessageSquare, Bell, User, LogOut, Scale, Users, Shield, Pencil, BookOpen
 } from "lucide-react";
 import { apiFetch, getToken } from "@/lib/api";
 
@@ -94,6 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: "Verifikasi Pengguna", href: "/admin/verifikasi", icon: Shield },
         { name: "Kelola Pengguna", href: "/admin/users", icon: Users },
         { name: "Kelola Kategori", href: "/admin/kategori", icon: FileText },
+        { name: "Kelola Artikel", href: "/admin/artikel", icon: BookOpen },
       ];
     }
   };

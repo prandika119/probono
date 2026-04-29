@@ -9,4 +9,14 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.js'
+export type * from './models/Lawyer.js'
+export type * from './models/Client.js'
+export type * from './models/Category.js'
+export type * from './models/Case.js'
+export type * from './models/CaseDocument.js'
+export type * from './models/CaseProgress.js'
+export type * from './models/Consultation.js'
+export type * from './models/Review.js'
+export type * from './models/Chat.js'
+export type * from './models/ChatFile.js'
 export type * from './commonInputTypes.js'

@@ -28,7 +28,7 @@ export class CasesService {
         estimated_loss: dto.estimated_loss,
         legal_goal: dto.legal_goal,
         urgency: dto.urgency as Urgency || Urgency.LOW,
-        documents: {}, // TODO logic file attachment
+        // documents: {}, // TODO logic file attachment
       },
       include: { category: true }
     });

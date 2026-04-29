@@ -44,3 +44,53 @@ export { Prisma }
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Lawyer
+ * 
+ */
+export type Lawyer = Prisma.LawyerModel
+/**
+ * Model Client
+ * 
+ */
+export type Client = Prisma.ClientModel
+/**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model Case
+ * 
+ */
+export type Case = Prisma.CaseModel
+/**
+ * Model CaseDocument
+ * 
+ */
+export type CaseDocument = Prisma.CaseDocumentModel
+/**
+ * Model CaseProgress
+ * 
+ */
+export type CaseProgress = Prisma.CaseProgressModel
+/**
+ * Model Consultation
+ * 
+ */
+export type Consultation = Prisma.ConsultationModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatFile
+ * 
+ */
+export type ChatFile = Prisma.ChatFileModel

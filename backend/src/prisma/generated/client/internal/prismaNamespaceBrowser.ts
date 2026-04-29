@@ -51,7 +51,17 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  Lawyer: 'Lawyer',
+  Client: 'Client',
+  Category: 'Category',
+  Case: 'Case',
+  CaseDocument: 'CaseDocument',
+  CaseProgress: 'CaseProgress',
+  Consultation: 'Consultation',
+  Review: 'Review',
+  Chat: 'Chat',
+  ChatFile: 'ChatFile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -73,10 +83,13 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  phone_number: 'phone_number',
   password: 'password',
   name: 'name',
   nik: 'nik',
   address: 'address',
+  province: 'province',
+  city: 'city',
   role: 'role',
   ktp_image: 'ktp_image',
   verification_status: 'verification_status',
@@ -87,6 +100,130 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const LawyerScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  license_number: 'license_number',
+  license_upload: 'license_upload',
+  organization_name: 'organization_name',
+  office_address: 'office_address',
+  experience: 'experience',
+  speciality: 'speciality'
+} as const
+
+export type LawyerScalarFieldEnum = (typeof LawyerScalarFieldEnum)[keyof typeof LawyerScalarFieldEnum]
+
+
+export const ClientScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  sktm_upload: 'sktm_upload'
+} as const
+
+export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
+export const CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type'
+} as const
+
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const CaseScalarFieldEnum = {
+  id: 'id',
+  client_id: 'client_id',
+  lawyer_id: 'lawyer_id',
+  category_id: 'category_id',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  date: 'date',
+  opponent: 'opponent',
+  estimated_loss: 'estimated_loss',
+  legal_goal: 'legal_goal',
+  urgency: 'urgency',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type CaseScalarFieldEnum = (typeof CaseScalarFieldEnum)[keyof typeof CaseScalarFieldEnum]
+
+
+export const CaseDocumentScalarFieldEnum = {
+  id: 'id',
+  case_id: 'case_id',
+  filename: 'filename',
+  file_url: 'file_url'
+} as const
+
+export type CaseDocumentScalarFieldEnum = (typeof CaseDocumentScalarFieldEnum)[keyof typeof CaseDocumentScalarFieldEnum]
+
+
+export const CaseProgressScalarFieldEnum = {
+  id: 'id',
+  case_id: 'case_id',
+  status: 'status',
+  note: 'note',
+  created_at: 'created_at'
+} as const
+
+export type CaseProgressScalarFieldEnum = (typeof CaseProgressScalarFieldEnum)[keyof typeof CaseProgressScalarFieldEnum]
+
+
+export const ConsultationScalarFieldEnum = {
+  id: 'id',
+  case_id: 'case_id',
+  lawyer_id: 'lawyer_id',
+  client_id: 'client_id',
+  title: 'title',
+  consultation_at: 'consultation_at',
+  is_online: 'is_online',
+  link_meet: 'link_meet',
+  location: 'location',
+  notes: 'notes'
+} as const
+
+export type ConsultationScalarFieldEnum = (typeof ConsultationScalarFieldEnum)[keyof typeof ConsultationScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  case_id: 'case_id',
+  client_id: 'client_id',
+  lawyer_id: 'lawyer_id',
+  rating: 'rating',
+  comment: 'comment',
+  created_at: 'created_at'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ChatScalarFieldEnum = {
+  id: 'id',
+  case_id: 'case_id',
+  sender_id: 'sender_id',
+  message: 'message',
+  status: 'status',
+  created_at: 'created_at'
+} as const
+
+export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatFileScalarFieldEnum = {
+  id: 'id',
+  chat_id: 'chat_id',
+  filename: 'filename',
+  file_url: 'file_url'
+} as const
+
+export type ChatFileScalarFieldEnum = (typeof ChatFileScalarFieldEnum)[keyof typeof ChatFileScalarFieldEnum]
 
 
 export const SortOrder = {

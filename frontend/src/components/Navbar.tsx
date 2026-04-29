@@ -79,6 +79,7 @@ export default function Navbar() {
           {[
             { name: "Beranda", href: "/" },
             { name: "Layanan", href: "#layanan" },
+            { name: "Edukasi", href: "/edukasi" },
             { name: "Cara Kerja", href: "#cara-kerja" },
             { name: "Testimoni", href: "#testimoni" }
           ].map((link) => (
@@ -149,6 +150,7 @@ export default function Navbar() {
         <div className="absolute top-24 left-6 right-6 lg:hidden bg-white rounded-3xl border border-slate-100 p-8 space-y-6 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
           <Link href="/" className="block text-lg font-bold text-slate-900 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Beranda</Link>
           <Link href="#layanan" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Layanan</Link>
+          <Link href="/edukasi" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Edukasi</Link>
           <Link href="#cara-kerja" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Cara Kerja</Link>
           <Link href="#testimoni" className="block text-lg font-bold text-slate-500 uppercase tracking-widest" onClick={() => setMobileOpen(false)}>Testimoni</Link>
           <div className="border-t border-slate-100 pt-8 space-y-4">

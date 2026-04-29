@@ -73,27 +73,39 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('joinCaseRoom')
   async handleJoinCaseRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody('caseId') caseId: string,
+    @MessageBody() data: any,
   ) {
-    console.log("try join room")
-    if (!client.user) return;
-    console.log(`${client.user.name} joined case room ${caseId}`);
+    const caseId = typeof data === 'string' ? data.trim() : data.caseId?.trim();
     
-    // Join a room based on case ID to receive messages only for this case
-    client.join(`case_${caseId}`);
+    if (!client.user) return;
+    if (!caseId) {
+      console.error('[WebSocket] joinCaseRoom failed: No caseId provided');
+      return;
+    }
+
+    const roomName = `case_${caseId}`;
+    console.log(`[WebSocket] User ${client.user.name} joining room: ${roomName}`);
+    
+    await client.join(roomName);
+    
+    // Log members in room for debugging
+    const clients = await this.server.in(roomName).allSockets();
+    console.log(`[WebSocket] Room ${roomName} now has ${clients.size} members`);
+    
     client.emit('joinCaseRoom', { success: true, caseId: caseId });
   }
 
   @SubscribeMessage('leaveCaseRoom')
-  handleLeaveCaseRoom(
+  async handleLeaveCaseRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody('caseId') caseId: string,
+    @MessageBody() data: any,
   ) {
-    if (!client.user) return;
-    console.log(`${client.user.name} left case room ${caseId}`);
+    const caseId = typeof data === 'string' ? data.trim() : data.caseId?.trim();
+    if (!client.user || !caseId) return;
     
-    // Keluar dari room agar tidak lagi menerima pesan dari kasus ini
-    client.leave(`case_${caseId}`);
+    const roomName = `case_${caseId}`;
+    console.log(`[WebSocket] User ${client.user.name} leaving room: ${roomName}`);
+    await client.leave(roomName);
     client.emit('leftCaseRoom', { success: true, caseId });
   }
 
@@ -103,22 +115,44 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() payload: CreateChatDto & { attachments?: Array<{ filename: string, file_url: string }> },
   ) {
-    console.log("try send message")
     if (!client.user) return;
-    console.log(payload)
+    
+    const cleanCaseId = payload.caseId.trim();
+    console.log(`[WebSocket] Message from ${client.user.name} for case ${cleanCaseId}: ${payload.message}`);
+    
     try {
       const chat = await this.chatsService.saveMessage(
-        payload.caseId,
+        cleanCaseId,
         client.user.id,
         payload.message,
         payload.attachments
       );
 
-      // Emit to everyone in the case room
-      console.log(chat)
-      this.server.to(`case_${payload.caseId}`).emit('newMessage', chat);
+      const roomName = `case_${cleanCaseId}`;
+      console.log(`[WebSocket] 📢 Siaran pesan ke room: ${roomName}`);
+      
+      // 1. Emit ke room kasus (standar)
+      this.server.to(roomName).emit('newMessage', chat);
+      
+      // 2. Kirim ke pengirim (pribadi)
+      this.server.to(`user_${client.user.id}`).emit('newMessage', chat);
+
+      // 3. Cari lawan chat dan kirim ke room pribadinya
+      const clientId = chat.case.client.user.id;
+      const lawyerId = chat.case.lawyer?.user?.id;
+      
+      const recipientId = client.user.id === clientId ? lawyerId : clientId;
+      
+      if (recipientId) {
+        console.log(`[WebSocket] 🎯 Mengirim langsung ke lawan chat: user_${recipientId}`);
+        this.server.to(`user_${recipientId}`).emit('newMessage', chat);
+      }
+      
+      // Log info tambahan untuk debug
+      const sockets = await this.server.in(roomName).fetchSockets();
+      console.log(`[WebSocket] Room ${roomName} members: ${sockets.length}`);
     } catch (error) {
-      console.error('Failed to send message:', error.message);
+      console.error('[WebSocket] Failed to send message:', error.message);
       client.emit('error', { message: error.message || 'Failed to send message' });
     }
   }

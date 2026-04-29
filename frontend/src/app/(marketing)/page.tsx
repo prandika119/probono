@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import EducationSection from "@/components/EducationSection";
 import HowItWorks from "@/components/HowItWorks";
 import Eligibility from "@/components/Eligibility";
 import Testimonials from "@/components/Testimonials";
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="flex-1 w-full overflow-hidden">
       <Hero />
       <Features />
+      <EducationSection />
       <HowItWorks />
       <Eligibility />
       <Testimonials />

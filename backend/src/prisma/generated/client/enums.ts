@@ -25,3 +25,51 @@ export const VerificationStatus = {
 } as const
 
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
+
+
+export const Speciality = {
+  PIDANA: 'PIDANA',
+  PERDATA: 'PERDATA',
+  KETENAGAKERJAAN: 'KETENAGAKERJAAN',
+  KELUARGA: 'KELUARGA',
+  BISNIS: 'BISNIS',
+  LAINNYA: 'LAINNYA'
+} as const
+
+export type Speciality = (typeof Speciality)[keyof typeof Speciality]
+
+
+export const CaseStatus = {
+  SUBMITTED: 'SUBMITTED',
+  ACCEPTED: 'ACCEPTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  CLOSED: 'CLOSED'
+} as const
+
+export type CaseStatus = (typeof CaseStatus)[keyof typeof CaseStatus]
+
+
+export const Urgency = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const
+
+export type Urgency = (typeof Urgency)[keyof typeof Urgency]
+
+
+export const CategoryType = {
+  CASE: 'CASE',
+  NEWS: 'NEWS'
+} as const
+
+export type CategoryType = (typeof CategoryType)[keyof typeof CategoryType]
+
+
+export const ChatStatus = {
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  READ: 'READ'
+} as const
+
+export type ChatStatus = (typeof ChatStatus)[keyof typeof ChatStatus]

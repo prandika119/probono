@@ -41,3 +41,90 @@
     @apply bg-blue-600 text-white px-6 py-3 rounded-xl font-bold transition-all hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-200 active:scale-95;
   }
 }
+
+/* Article Content Typography */
+.article-content {
+  color: #334155; /* slate-700 */
+  line-height: 1.8;
+}
+
+.article-content h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a; /* slate-900 */
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
+}
+
+/* Hide first h1 if it is redundant with the page title */
+.article-content > div > h1:first-child,
+.article-content h1:first-child {
+  display: none;
+}
+
+.article-content h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.article-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+}
+
+.article-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+
+.article-content blockquote {
+  border-left: 4px solid #3b82f6; /* blue-500 */
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: #475569; /* slate-600 */
+  margin: 2rem 0;
+  font-size: 1.25rem;
+}
+
+.article-content img {
+  border-radius: 1rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.article-content a {
+  color: #2563eb; /* blue-600 */
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.article-content pre, .article-content code {
+  background-color: #f1f5f9; /* slate-100 */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
