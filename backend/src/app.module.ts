@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ChatsModule } from './chats/chats.module';
 import { EducationsModule } from './educations/educations.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     CasesModule,
     ChatsModule,
     EducationsModule,
+    FilesModule,
     ChatbotModule,
   ],
   controllers: [AppController],

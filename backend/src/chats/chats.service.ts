@@ -73,7 +73,7 @@ export class ChatsService {
   async handleFileUpload(caseId: string, file: Express.Multer.File, user: User) {
     await this.verifyCaseAccess(caseId, user);
 
-    const fileUrl = `/uploads/chats/${file.filename}`;
+    const fileUrl = `/uploads/private/chats/${file.filename}`;
     
     return {
       status: 'success',

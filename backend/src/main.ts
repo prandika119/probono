@@ -13,9 +13,9 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
-  // Khusus untuk artikel edukasi, cover image bisa diakses publik
-  app.useStaticAssets(join(process.cwd(), 'uploads/educations'), {
-    prefix: '/api/v1/uploads/educations/',
+  // File di folder public bisa diakses secara publik (foto profil, cover edukasi, dll)
+  app.useStaticAssets(join(process.cwd(), 'uploads/public'), {
+    prefix: '/api/v1/uploads/public/',
   });
 
   await app.listen(process.env.PORT ?? 3009);

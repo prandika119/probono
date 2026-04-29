@@ -12,10 +12,20 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Role } from 'src/prisma/generated/client/enums';
+import * as fs from 'fs';
 
 const uploadOptions = {
   storage: diskStorage({
-    destination: './uploads',
+    destination: (req, file, cb) => {
+      let dest = './uploads/private/identities';
+      if (file.fieldname === 'profile_image') {
+        dest = './uploads/public/profiles';
+      }
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      cb(null, dest);
+    },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
@@ -55,7 +65,7 @@ export class UsersController {
       throw new BadRequestException('You are not allowed to upload for this user');
     }
     if (!file) throw new BadRequestException('File is required');
-    const fileUrl = `/uploads/${file.filename}`;
+    const fileUrl = `/uploads/private/identities/${file.filename}`;
     return this.usersService.uploadKtp(userId, fileUrl);
   }
 
@@ -66,7 +76,7 @@ export class UsersController {
       throw new BadRequestException('You are not allowed to upload for this user');
     }
     if (!file) throw new BadRequestException('File is required');
-    const fileUrl = `/uploads/${file.filename}`;
+    const fileUrl = `/uploads/public/profiles/${file.filename}`;
     return this.usersService.uploadProfileImage(userId, fileUrl);
   }
 
@@ -77,7 +87,7 @@ export class UsersController {
       throw new BadRequestException('You are not allowed to upload for this user');
     }
     if (!file) throw new BadRequestException('File is required');
-    const fileUrl = `/uploads/${file.filename}`;
+    const fileUrl = `/uploads/private/identities/${file.filename}`;
     return this.usersService.uploadSktm(userId, fileUrl);
   }
 
@@ -88,7 +98,7 @@ export class UsersController {
       throw new BadRequestException('You are not allowed to upload for this user');
     }
     if (!file) throw new BadRequestException('File is required');
-    const fileUrl = `/uploads/${file.filename}`;
+    const fileUrl = `/uploads/private/identities/${file.filename}`;
     return this.usersService.uploadLicense(userId, fileUrl);
   }
 
