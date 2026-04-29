@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import * as fs from 'fs';
 
 const fileFilter = (req: any, file: any, cb: any) => {
   const allowedExtensions = /jpeg|jpg|png|pdf|doc|docx|xls|xlsx/;
@@ -33,7 +34,13 @@ export class ChatsController {
   @Post(':caseId/upload')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
-      destination: './uploads/chats',
+      destination: (req, file, cb) => {
+        const dest = './uploads/private/chats';
+        if (!fs.existsSync(dest)) {
+          fs.mkdirSync(dest, { recursive: true });
+        }
+        cb(null, dest);
+      },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
