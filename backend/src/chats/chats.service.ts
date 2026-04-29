@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from 'src/prisma/generated/client/client';
+import { User } from '../prisma/generated/client/client';
 
 @Injectable()
 export class ChatsService {
@@ -101,7 +101,16 @@ export class ChatsService {
           }))
         } : undefined
       },
-      include: { sender: { select: { id: true, name: true, role: true } }, files: true }
+      include: { 
+        sender: { select: { id: true, name: true, role: true } }, 
+        files: true,
+        case: {
+          include: {
+            client: { include: { user: { select: { id: true } } } },
+            lawyer: { include: { user: { select: { id: true } } } }
+          }
+        }
+      }
     });
 
     return chat;
