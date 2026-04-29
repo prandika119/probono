@@ -203,7 +203,15 @@ Autentikasi menggunakan standard **Bearer Token** di dalam HTTP Header.
 **Request Format:** `multipart/form-data`
 - `license_file`: File gambar/dokumen lisensi advokat (jpg/png/pdf)
 
-### 6. Verifikasi User (Admin Only)
+### 6. Upload/Update Profile Image
+**Endpoint:** `POST /users/:userId/upload-profile`  
+**Deskripsi:** Upload gambar profil user. Format _multipart/form-data_.  
+**Access:** Protected (Semua Role)  
+
+**Request Format:** `multipart/form-data`
+- `profile_image`: File gambar profil (jpg/png)
+
+### 7. Verifikasi User (Admin Only)
 **Endpoint:** `PATCH /users/:userId/verify`  
 **Deskripsi:** Menerima atau menolak registrasi user setelah meninjau dokumen (KTP, SKTM, atau Lisensi Hukum).  
 **Access:** Protected (Admin)  
@@ -225,7 +233,7 @@ Autentikasi menggunakan standard **Bearer Token** di dalam HTTP Header.
 }
 ```
 
-### 7. Soft Delete / Non-aktifkan User
+### 8. Soft Delete / Non-aktifkan User
 **Endpoint:** `DELETE /users/:userId`  
 **Deskripsi:** Menghapus atau menutup akun user. Sesuai rekomendasi ERD, ini akan melakukan **Soft Delete** (atau men-set `is_active = false` & menambahkan `deleted_at`).  
 **Access:** Protected (Admin, atau User yang ingin menghapus akun sendiri)  

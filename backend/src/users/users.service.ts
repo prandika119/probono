@@ -62,6 +62,14 @@ export class UsersService {
     return { message: 'KTP uploaded successfully', data: { url: fileUrl } };
   }
 
+  async uploadProfileImage(userId: string, fileUrl: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { profile_image: fileUrl },
+    });
+    return { message: 'Profile image uploaded successfully', data: { url: fileUrl } };
+  }
+
   async uploadSktm(userId: string, fileUrl: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (user?.role !== Role.CLIENT) throw new BadRequestException('Only client can upload SKTM');

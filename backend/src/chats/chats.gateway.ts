@@ -129,7 +129,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
 
       const roomName = `case_${cleanCaseId}`;
-      console.log(`[WebSocket] 📢 Siaran pesan ke room: ${roomName}`);
+      console.log(`[WebSocket]  Siaran pesan ke room: ${roomName}`);
       
       // 1. Emit ke room kasus (standar)
       this.server.to(roomName).emit('newMessage', chat);
@@ -144,7 +144,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const recipientId = client.user.id === clientId ? lawyerId : clientId;
       
       if (recipientId) {
-        console.log(`[WebSocket] 🎯 Mengirim langsung ke lawan chat: user_${recipientId}`);
+        console.log(`[WebSocket]  Mengirim langsung ke lawan chat: user_${recipientId}`);
         this.server.to(`user_${recipientId}`).emit('newMessage', chat);
       }
       

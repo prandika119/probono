@@ -14,7 +14,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   // Khusus untuk artikel edukasi, cover image bisa diakses publik
-  app.useStaticAssets(join(__dirname, '..', 'uploads/educations'), {
+  app.useStaticAssets(join(process.cwd(), 'uploads/educations'), {
     prefix: '/api/v1/uploads/educations/',
   });
 

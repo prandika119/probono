@@ -24,6 +24,19 @@ export function middleware(request: NextRequest) {
     if (!token) {
       return NextResponse.redirect(new URL('/auth/login', request.url));
     }
+
+    // Role validation
+    if (role) {
+      const dashboard = getRoleDashboard(role);
+      const isTryingToAccessOtherDashboard = 
+        (request.nextUrl.pathname.startsWith('/client') && dashboard !== '/client') ||
+        (request.nextUrl.pathname.startsWith('/advokat') && dashboard !== '/advokat') ||
+        (request.nextUrl.pathname.startsWith('/admin') && dashboard !== '/admin');
+
+      if (isTryingToAccessOtherDashboard) {
+        return NextResponse.redirect(new URL(dashboard, request.url));
+      }
+    }
   }
 
   // Redirect user yang sudah login dari halaman auth ke dashboard sesuai role

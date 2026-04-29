@@ -36,13 +36,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     if (!getToken()) return;
     apiFetch("/auth/me")
-      .then((res) => setUser(res.data.user))
+      .then((res) => {
+        const userData = res.data.user;
+        setUser(userData);
+
+        // Security check: Ensure actual role matches the path
+        const actualRole = userData.role?.toLowerCase();
+        const normalizedRole = (actualRole === 'lawyer' || actualRole === 'advokat') ? 'advokat' : actualRole;
+        
+        if (normalizedRole !== roleFromPath) {
+          const correctDashboard = normalizedRole === 'admin' ? '/admin' : normalizedRole === 'advokat' ? '/advokat' : '/client';
+          router.push(correctDashboard);
+        }
+      })
       .catch(() => {
         // Token invalid — logout
         handleLogout();
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [roleFromPath, router]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -83,9 +95,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       ];
     } else if (roleFromPath === "advokat") {
       return [
-        { name: "Dashboard", href: "/advokat", icon: Home },
+        { name: "Dashboard", href: "/advokat", icon: Home, exactMatch: true },
         { name: "Telusuri Kasus", href: "/advokat/explore", icon: FileText },
-        { name: "Kasus Aktif", href: "/advokat/kasus", icon: Scale },
+        { name: "Kasus Aktif", href: "/advokat/kasus", icon: Scale, exactMatch: true },
         { name: "Pesan", href: "/advokat/chat", icon: MessageSquare },
       ];
     } else {
@@ -168,7 +180,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {navigation.map((item) => {
               const bestMatch = [...navigation]
                 .sort((a, b) => b.href.length - a.href.length)
-                .find((n) => pathname === n.href || pathname?.startsWith(`${n.href}/`));
+                .find((n) => {
+                  if ((n as any).exactMatch) return pathname === n.href;
+                  return pathname === n.href || pathname?.startsWith(`${n.href}/`);
+                });
               
               const isActive = bestMatch?.href === item.href;
               const bgClass = isActive ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900";
