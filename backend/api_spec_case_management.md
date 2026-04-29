@@ -162,6 +162,11 @@ Semua endpoint di bawah ini memerlukan header autentikasi:
         "title": "Sengketa Lahan Warisan Keluarga",
         "category_name": "Perdata",
         "status": "in_progress",
+        "lawyer": {
+          "id": "lawyer-uuid",
+          "name": "Hotman Paris",
+          "organization_name": "LBH Jaya"
+        },
         "created_at": "2023-11-20T10:00:00Z"
       }
     ],
@@ -281,6 +286,8 @@ Semua endpoint di bawah ini memerlukan header autentikasi:
       "client": { "id": "client-1", "name": "Budi Santoso", "phone_number": "0812xx" },
       "lawyer": { "id": "lawyer-1", "name": "Hotman", "organization_name": "LBH Jaya" },
       "category": { "name": "Perdata" },
+      "location": "Jakarta Selatan",
+      "legal_goal": "Mendapatkan hak tanah kembali sepenuhnya",
       "urgency": "high",
       "status": "in_progress",
       "documents": [

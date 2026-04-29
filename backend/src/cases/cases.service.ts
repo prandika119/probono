@@ -66,7 +66,7 @@ export class CasesService {
     const [cases, total] = await Promise.all([
       this.prisma.case.findMany({
         where: { client_id: client.id },
-        include: { category: true, progress: { orderBy: { created_at: 'desc' }, take: 1 } },
+        include: { lawyer:true, category: true, progress: { orderBy: { created_at: 'desc' }, take: 1 } },
         orderBy: { created_at: 'desc' },
         take,
         skip,
@@ -81,6 +81,7 @@ export class CasesService {
           id: c.id,
           title: c.title,
           category_name: c.category.name,
+          lawyer: c.lawyer,
           status: c.progress.length > 0 ? c.progress[0].status : CaseStatus.SUBMITTED,
           created_at: c.created_at,
         })),
@@ -220,9 +221,9 @@ export class CasesService {
       throw new ForbiddenException('Anda tidak berhak melihat kasus ini');
     }
   
-    if (user.role === 'LAWYER' && c.lawyer?.user?.id !== user.id) {
-      throw new ForbiddenException('Kasus ini tidak sedang Anda tangani');
-    }
+    // if (user.role === 'LAWYER' && c.lawyer?.user?.id !== user.id) {
+    //   throw new ForbiddenException('Kasus ini tidak sedang Anda tangani');
+    // }
 
     const latestStatus = c.progress.length > 0 ? c.progress[c.progress.length - 1].status : CaseStatus.SUBMITTED;
 
@@ -232,6 +233,8 @@ export class CasesService {
         case: {
           id: c.id,
           title: c.title,
+          location: c.location,
+          legal_goal: c.legal_goal,
           description: c.description,
           client: { id: c.client.id, name: c.client.user.name, phone_number: c.client.user.phone_number },
           lawyer: c.lawyer ? { id: c.lawyer.id, name: c.lawyer.user.name, organization_name: c.lawyer.organization_name } : null,

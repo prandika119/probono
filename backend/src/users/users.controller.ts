@@ -42,7 +42,7 @@ export class UsersController {
 
   @Put(':userId')
   async updateProfile(@Request() req, @Param('userId') userId: string, @Body() updateUserDto: UpdateUserDto) {
-    if (req.user.role !== Role.ADMIN && req.user.id !== userId) {
+    if (req.user.id !== userId) {
       throw new BadRequestException('You are not allowed to update this profile');
     }
     return this.usersService.updateProfile(userId, updateUserDto);
@@ -57,6 +57,17 @@ export class UsersController {
     if (!file) throw new BadRequestException('File is required');
     const fileUrl = `/uploads/${file.filename}`;
     return this.usersService.uploadKtp(userId, fileUrl);
+  }
+
+  @Post(':userId/upload-profile')
+  @UseInterceptors(FileInterceptor('profile_image', uploadOptions))
+  async uploadProfileImage(@Request() req, @Param('userId') userId: string, @UploadedFile() file: Express.Multer.File) {
+    if (req.user.id !== userId) {
+      throw new BadRequestException('You are not allowed to upload for this user');
+    }
+    if (!file) throw new BadRequestException('File is required');
+    const fileUrl = `/uploads/${file.filename}`;
+    return this.usersService.uploadProfileImage(userId, fileUrl);
   }
 
   @Post(':userId/upload-sktm')
