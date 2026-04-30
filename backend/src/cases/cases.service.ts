@@ -261,7 +261,7 @@ export class CasesService {
       throw new ForbiddenException('Anda tidak berhak mengunggah dokumen ini');
     }
 
-    const fileUrl = `/uploads/cases/${file.filename || file.originalname}`;
+    const fileUrl = `/uploads/private/cases/${file.filename || file.originalname}`;
 
     const doc = await this.prisma.caseDocument.create({
       data: {

@@ -9,10 +9,17 @@ import { Role } from '../prisma/generated/client/enums';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import * as fs from 'fs';
 
 const uploadOptions = {
   storage: diskStorage({
-    destination: './uploads/educations',
+    destination: (req, file, cb) => {
+      const dest = './uploads/public/educations';
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      cb(null, dest);
+    },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
@@ -34,7 +41,7 @@ export class EducationsController {
     @UploadedFile() file?: Express.Multer.File
   ) {
     if (file) {
-      createEducationDto.image_url = `/api/v1/uploads/educations/${file.filename}`;
+      createEducationDto.image_url = `/uploads/public/educations/${file.filename}`;
     }
     return this.educationsService.create(createEducationDto, req.user.id);
   }
@@ -61,7 +68,7 @@ export class EducationsController {
     @UploadedFile() file?: Express.Multer.File
   ) {
     if (file) {
-      updateEducationDto.image_url = `/api/v1/uploads/educations/${file.filename}`;
+      updateEducationDto.image_url = `/uploads/public/educations/${file.filename}`;
     }
     return this.educationsService.update(id, updateEducationDto);
   }

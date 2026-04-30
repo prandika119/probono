@@ -9,6 +9,8 @@ import { CasesModule } from './cases/cases.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatsModule } from './chats/chats.module';
 import { EducationsModule } from './educations/educations.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { EducationsModule } from './educations/educations.module';
     CasesModule,
     ChatsModule,
     EducationsModule,
+    FilesModule,
+    ChatbotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

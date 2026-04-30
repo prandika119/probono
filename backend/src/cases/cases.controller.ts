@@ -11,10 +11,17 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/prisma/generated/client/enums';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import * as fs from 'fs';
 
 const uploadOptions = {
   storage: diskStorage({
-    destination: './uploads/cases',
+    destination: (req, file, cb) => {
+      const dest = './uploads/private/cases';
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      cb(null, dest);
+    },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
