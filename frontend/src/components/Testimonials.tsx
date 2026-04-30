@@ -5,7 +5,7 @@ export default function Testimonials() {
     {
       name: "Budi Santoso",
       role: "Pekerja Bangunan",
-      content: "Awalnya saya takut untuk melaporkan sengketa tanah keluarga karena tidak punya uang. Berkat ProBono, saya mendapat pengacara hebat yang mendampingi saya dari awal hingga sertifikat kembali ke tangan kami. Terima kasih banyak!",
+      content: "Awalnya saya takut untuk melaporkan sengketa tanah keluarga karena tidak punya uang. Berkat ProbNect, saya mendapat pengacara hebat yang mendampingi saya dari awal hingga sertifikat kembali ke tangan kami. Terima kasih banyak!",
       initial: "B"
     },
     {
@@ -17,7 +17,7 @@ export default function Testimonials() {
     {
       name: "Agus Pratama",
       role: "Buruh Pabrik",
-      content: "Ketika saya di-PHK sepihak tanpa pesangon, saya merasa sangat putus asa. Pengacara dari ProBono membantu mediasi dengan perusahaan hingga hak-hak saya dibayarkan penuh. Pelayanannya sangat profesional meskipun gratis.",
+      content: "Ketika saya di-PHK sepihak tanpa pesangon, saya merasa sangat putus asa. Pengacara dari ProbNect membantu mediasi dengan perusahaan hingga hak-hak saya dibayarkan penuh. Pelayanannya sangat profesional meskipun gratis.",
       initial: "A"
     }
   ];

@@ -146,7 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-slate-100">
           <Link href="/" className="flex items-center gap-2">
             <Scale className="h-8 w-8 text-blue-600" />
-            <span className="font-bold text-xl tracking-tight text-slate-900">ProBono</span>
+            <span className="font-bold text-xl tracking-tight text-slate-900">ProbNect</span>
           </Link>
           <button className="lg:hidden text-slate-500 hover:text-slate-700" onClick={() => setSidebarOpen(false)}>
             <X className="h-6 w-6" />

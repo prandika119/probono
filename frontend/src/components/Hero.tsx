@@ -27,7 +27,7 @@ export default function Hero() {
                 Gratis & Terpercaya.
               </h1>
               <p className="text-lg leading-relaxed text-slate-500 max-w-xl font-medium">
-                ProBono menghubungkan Anda dengan ribuan advokat profesional yang siap memberikan pembelaan hukum secara sukarela. Karena hak hukum Anda tidak seharusnya terbatas oleh biaya.
+                ProbNect menghubungkan Anda dengan ribuan advokat profesional yang siap memberikan pembelaan hukum secara sukarela. Karena hak hukum Anda tidak seharusnya terbatas oleh biaya.
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
                 <Link 

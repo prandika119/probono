@@ -13,7 +13,7 @@ export default function AuthLayout({
         <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col justify-center h-full">
           <Link href="/" className="flex items-center gap-2 mb-12 w-fit">
             <Scale className="h-10 w-10 text-blue-400" />
-            <span className="font-bold text-3xl tracking-tight">ProBono</span>
+            <span className="font-bold text-3xl tracking-tight">ProbNect</span>
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
             Akses Keadilan <br />Hukum untuk Semua
@@ -24,7 +24,7 @@ export default function AuthLayout({
         </div>
         
         <div className="relative z-10 text-sm text-blue-300 max-w-xl mx-auto w-full">
-          © {new Date().getFullYear()} ProBono. All rights reserved.
+          © {new Date().getFullYear()} ProbNect. All rights reserved.
         </div>
         
         {/* Decorative elements */}
@@ -39,7 +39,7 @@ export default function AuthLayout({
           {/* Mobile Header */}
           <div className="flex lg:hidden items-center gap-2 mb-8">
             <Scale className="h-8 w-8 text-blue-600" />
-            <span className="font-bold text-2xl tracking-tight text-blue-900">ProBono</span>
+            <span className="font-bold text-2xl tracking-tight text-blue-900">ProbNect</span>
           </div>
           {children}
         </div>

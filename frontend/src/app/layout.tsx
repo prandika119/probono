@@ -13,8 +13,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "ProBono | Akses Keadilan Hukum untuk Semua",
-  description: "Platform bantuan hukum gratis untuk masyarakat kurang mampu. Hubungkan klien dengan advokat pro bono secara transparan dan efisien.",
+  title: "ProbNect | Platform Bantuan Hukum Berbasis AI",
+  description: "ProbNect: Platform Bantuan Hukum Berbasis AI untuk Akses Bantuan Hukum yang Inklusif.",
 };
 
 export default function RootLayout({

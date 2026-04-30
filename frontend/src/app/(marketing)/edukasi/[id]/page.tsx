@@ -89,7 +89,7 @@ export default function EducationDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Ditulis oleh</p>
-                <p className="text-sm font-bold text-slate-900">{article.author?.name || "Admin ProBono"}</p>
+                <p className="text-sm font-bold text-slate-900">{article.author?.name || "Admin ProbNect"}</p>
               </div>
             </div>
 

@@ -67,10 +67,10 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-9 h-9 bg-blue-600 text-white flex items-center justify-center rounded-xl font-bold text-lg group-hover:rotate-6 transition-transform shadow-lg shadow-blue-200">
-            PB
+            PN
           </div>
           <span className={`font-bold text-xl tracking-tighter transition-colors duration-500 ${scrolled ? "text-slate-900" : "text-slate-900"}`}>
-            Pro<span className="text-blue-600">Bono</span>
+            Prob<span className="text-blue-600">Nect</span>
           </span>
         </Link>
 

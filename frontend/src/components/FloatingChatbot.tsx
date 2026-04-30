@@ -231,7 +231,7 @@ export default function FloatingChatbot() {
                     className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-[0.98]"
                     onClick={() => setIsOpen(false)}
                   >
-                    Login ke ProBono
+                    Login ke ProbNect
                   </Link>
                   <p className="mt-4 text-xs text-slate-400">
                     Belum punya akun? <Link href="/auth/register" className="text-blue-600 font-bold hover:underline">Daftar sekarang</Link>
