@@ -61,9 +61,10 @@ export default function Navbar() {
     }`}>
       <div className={`container mx-auto transition-all duration-700 ease-in-out ${
         scrolled 
-          ? "max-w-5xl bg-white/70 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40 rounded-[2.5rem] px-12 h-16" 
-          : "max-w-7xl bg-white/0 border-b border-transparent px-10 lg:px-12 h-24"
-      } flex items-center justify-between`}>
+          ? "max-w-6xl bg-white/70 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40 rounded-[2.5rem] px-6 lg:px-10 h-16" 
+          : "max-w-7xl bg-white/0 border-b border-transparent px-6 lg:px-12 h-24"
+      } flex items-center justify-between`}
+      >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-9 h-9 bg-blue-600 text-white flex items-center justify-center rounded-xl font-bold text-lg group-hover:rotate-6 transition-transform shadow-lg shadow-blue-200">
@@ -75,7 +76,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <div className="hidden lg:flex items-center gap-12">
+        <div className={`hidden lg:flex items-center transition-all duration-700 ${scrolled ? 'gap-6 xl:gap-8' : 'gap-8 xl:gap-12'}`}>
           {[
             { name: "Beranda", href: "/" },
             { name: "Layanan", href: "#layanan" },
@@ -95,7 +96,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className={`hidden md:flex items-center transition-all duration-700 ${scrolled ? 'gap-4 xl:gap-6' : 'gap-6 xl:gap-8'}`}>
           {user ? (
             <>
               <Link
