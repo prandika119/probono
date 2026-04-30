@@ -1,0 +1,75 @@
+# run command: docker compose -f docker-compose.staging.yml up -d
+
+name: probono-staging
+
+services:
+  # ============================================================
+  # PostgreSQL Database
+  # ============================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: probono-postgres-staging
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - probono-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ============================================================
+  # NestJS Backend
+  # ============================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: probono-backend-staging
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      NODE_ENV: staging
+      PORT: 3000
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      # Persistansi folder uploads (foto profil, dokumen, dll)
+      - uploads_data:/app/uploads
+    networks:
+      - probono-net
+    depends_on:
+      postgres:
+        # Backend hanya mulai setelah Postgres benar-benar siap
+        condition: service_healthy
+
+# ============================================================
+# Volumes (Penyimpanan Persisten)
+# ============================================================
+volumes:
+  postgres_data:
+    name: probono-staging-postgres-data
+  uploads_data:
+    name: probono-staging-uploads
+
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  probono-net:
+    name: probono-staging-net
+    driver: bridge

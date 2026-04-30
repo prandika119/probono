@@ -8,7 +8,7 @@ Sebelum menggunakan chatbot, pastikan variabel lingkungan berikut sudah diisi di
 
 ```env
 # API Key dari Google AI Studio (https://aistudio.google.com/apikey)
-GOOGLE_API_KEY=AIzaXXXXXXXXXXXX
+GEMINI_API_KEY=AIzaXXXXXXXXXXXX
 
 # API Key dari Jina AI (https://jina.ai) - untuk embedding dokumen
 JINA_API_KEY=jina_XXXXXXXXXX
