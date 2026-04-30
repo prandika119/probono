@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingChatbot from "@/components/FloatingChatbot";
 
 export default function MarketingLayout({
   children,
@@ -11,6 +12,7 @@ export default function MarketingLayout({
       <Navbar />
       <div className="flex-1 mt-20">{children}</div>
       <Footer />
+      <FloatingChatbot />
     </div>
   );
 }

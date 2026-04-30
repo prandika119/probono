@@ -8,6 +8,7 @@ import {
   MessageSquare, Bell, User, LogOut, Scale, Users, Shield, Pencil, BookOpen
 } from "lucide-react";
 import { apiFetch, getToken } from "@/lib/api";
+import FloatingChatbot from "@/components/FloatingChatbot";
 
 interface UserProfile {
   id: string;
@@ -263,6 +264,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+      <FloatingChatbot />
     </div>
   );
 }
